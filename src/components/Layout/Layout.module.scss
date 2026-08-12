@@ -1,0 +1,116 @@
+.layout {
+  display: grid;
+  grid-template-areas:
+    'sidebar header'
+    'sidebar main';
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 80px 1fr;
+  height: 100dvh;
+
+  @include mobile() {
+    grid-template-areas:
+      'header'
+      'main';
+    grid-template-columns: 1fr;
+  }
+}
+
+.header {
+  grid-area: header;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: rem(10);
+  padding: fluid(16, 12) fluid(32, 16);
+  background-color: var(--color-surface);
+  box-shadow: inset 0 0 0 rem(1) var(--color-border);
+  align-items: center;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  gap: rem(10);
+}
+
+.burgerButton {
+  padding: rem(12);
+  margin: 0;
+  border: rem(1) solid var(--color-tag-quantity-item-hover);
+  background-color: transparent;
+  border-radius: rem(8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > svg {
+    color: var(--color-text);
+  }
+
+  @include hover() {
+    background-color: var(--color-border);
+  }
+}
+
+.searchWrapper {
+  max-width: fluid(320, 193);
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: fluid(16, 10);
+}
+
+.addBookmark {
+  min-width: rem(46);
+  min-height: rem(46);
+
+  @include tablet() {
+    & > span {
+      display: none;
+    }
+  }
+
+  @include mobile-s {
+    padding: 0 !important;
+  }
+}
+
+.avatar {
+  min-height: rem(40);
+  min-width: rem(40);
+  border-radius: 50%;
+}
+
+.sidebar {
+  grid-area: sidebar;
+}
+
+.overlay {
+  display: none;
+
+  @include mobile {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: oklch(0 0 0 / 0.4);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+
+    &.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+}
+
+.main {
+  grid-area: main;
+  padding: fluid(32, 24) fluid(32, 16);
+}

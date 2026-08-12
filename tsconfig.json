@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", // В какой стандарт JS компилируется
+    "useDefineForClassFields": true, // Как компилируются поля класса (class Foo { x = 1 })
+    "module": "es2022", // Формат генерируемых import/export конструкций.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"], // Какие встроенные типы (глобальные API) доступны компилятору.
+    "skipLibCheck": true, // Пропускать проверку типов внутри файлов деклараций (.d.ts), включая те, что генерируют библиотеки
+
+    "moduleResolution": "bundler", // Как TS ищет модули при импорте (алгоритм резолва путей).
+    "allowImportingTsExtensions": false, // Запрещает писать import './foo.ts' с явным расширением .ts в коде.
+    "resolveJsonModule": true, // Разрешает import data from './file.json' прямо в коде с автоматической типизацией
+    "isolatedModules": true, // Требует, чтобы каждый файл мог компилироваться независимо, без знания о других файлах проекта.
+    "noEmit": true, // Не генерировать выходные JS-файлы вообще — TS используется только для проверки типов.
+    "jsx": "react-jsx", // Как обрабатывать JSX-синтаксис.
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}

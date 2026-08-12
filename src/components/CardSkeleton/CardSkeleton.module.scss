@@ -1,0 +1,74 @@
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+%skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-border-muted) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.favicon {
+  @extend %skeleton;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.title {
+  @extend %skeleton;
+  height: 16px;
+  width: 55%;
+}
+.url {
+  @extend %skeleton;
+  height: 13px;
+  width: 35%;
+}
+.description {
+  @extend %skeleton;
+  height: 52px;
+  width: 100%;
+}
+.footer {
+  display: flex;
+  gap: 12px;
+}
+.stat {
+  @extend %skeleton;
+  height: 13px;
+  width: 60px;
+}

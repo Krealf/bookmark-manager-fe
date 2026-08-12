@@ -1,0 +1,66 @@
+.checkbox {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: rem(8);
+  cursor: pointer;
+  user-select: none;
+}
+
+.input {
+  appearance: none;
+  position: relative;
+  width: rem(16);
+  height: rem(16);
+  background: transparent;
+  border: rem(1) solid var(--color-text-faint);
+  transition: var(--transition-duration);
+  border-radius: rem(4);
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: rem(0);
+    height: rem(0);
+    background-color: #fff;
+    -webkit-mask-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='M16.666 5 7.5 14.167 3.333 10'/%3e%3c/svg%3e");
+    mask-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='M16.666 5 7.5 14.167 3.333 10'/%3e%3c/svg%3e");
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  &:checked {
+    background-color: var(--teal-700);
+    border: rem(1) solid var(--teal-700);
+
+    @include hover() {
+      background-color: var(--teal-800);
+      border: rem(1) solid var(--teal-800);
+    }
+
+    &::after {
+      width: rem(16);
+      height: rem(16);
+      transition: var(--transition-duration);
+    }
+  }
+
+  @include hover() {
+    background-color: var(--color-border);
+  }
+
+  &:disabled {
+    background: #ccc !important;
+    border-color: #ccc !important;
+    cursor: not-allowed;
+
+    &::after {
+      filter: grayscale(100%);
+    }
+  }
+}

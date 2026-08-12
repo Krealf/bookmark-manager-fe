@@ -1,0 +1,56 @@
+@use 'helpers' as *;
+
+html.modal-open {
+  overflow: hidden;
+}
+
+body {
+  font-size: rem(14);
+  line-height: 1.4;
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: 0;
+  font-weight: 600;
+
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  color: var(--color-text);
+}
+
+a,
+button,
+label,
+input,
+textarea,
+select,
+svg * {
+  transition-duration: var(--transition-duration);
+}
+
+a {
+  color: inherit;
+
+  &[class] {
+    text-decoration: none;
+  }
+}
+
+:focus-visible {
+  box-shadow: 0 0 0 rem(2) var(--color-surface);
+  outline: rem(2) solid var(--color-primary);
+  outline-offset: rem(2);
+  transition-duration: 0s !important;
+}

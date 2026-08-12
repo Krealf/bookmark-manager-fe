@@ -1,0 +1,129 @@
+.container {
+  max-width: rem(1440);
+  margin-inline: auto;
+  padding-inline: rem(20);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper {
+  max-width: rem(448);
+  padding: rem(40) rem(32);
+  display: flex;
+  flex-direction: column;
+  gap: rem(32);
+  background-color: var(--color-surface);
+  border-radius: rem(12);
+  box-shadow: 0 rem(2) rem(4) 0 rgba(21, 21, 21, 0.06);
+  width: 100%;
+  border: rem(1) solid var(--color-wrapper-border);
+}
+
+.headerLogo {
+  align-self: start;
+}
+
+.logoDark {
+  display: none;
+}
+
+.logoLight {
+  display: block;
+}
+
+[data-theme='dark'] {
+  .logoDark {
+    display: block;
+  }
+
+  .logoLight {
+    display: none;
+  }
+}
+
+.title {
+  margin: 0 0 rem(6);
+  font-size: rem(24);
+}
+
+.subtitle {
+  font-size: rem(14);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.form {
+  display: flex;
+  gap: rem(16);
+  flex-direction: column;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: rem(6);
+}
+
+.input {
+  border-radius: rem(8);
+  border: solid 1px var(--color-text-faint);
+  height: rem(45);
+  padding: rem(12);
+  background-color: var(--color-surface-inverse-search);
+  color: var(--color-text);
+  box-shadow: 0 rem(1) rem(2) 0 #0a0d120c;
+}
+
+.submitButton {
+  padding: rem(12) rem(16);
+  border-radius: rem(8);
+  font-size: rem(16);
+  display: flex;
+  gap: rem(4);
+  align-items: center;
+  justify-content: center;
+  transition-duration: var(--transition-duration);
+  height: rem(46);
+  border: rem(2) solid transparent;
+  //noinspection CssInvalidFunction
+  background: linear-gradient(var(--teal-700), var(--teal-700)) padding-box,
+  linear-gradient(
+          to bottom,
+          oklch(from var(--teal-700) l c h / 0.8),
+          oklch(from var(--teal-700) l c h / 1)
+  ) border-box;
+  color: #fff;
+
+  @include hover() {
+    //noinspection CssInvalidFunction
+    background: linear-gradient(var(--teal-800), var(--teal-800)) padding-box,
+    linear-gradient(
+            to bottom,
+            oklch(from var(--teal-800) l c h / 0.8),
+            oklch(from var(--teal-800) l c h / 1)
+    ) border-box;
+    color: #fff;
+  }
+}
+
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: rem(12);
+}
+
+.footerText {
+  margin: 0;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.link {
+  color: var(--color-text);
+  font-weight: 600;
+  line-height: 1.4;
+}

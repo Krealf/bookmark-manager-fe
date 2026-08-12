@@ -1,0 +1,52 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+  width: rem(64);
+  height: rem(30);
+
+  & input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.slider {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-switch-bg);
+  transition: 0.4s;
+  border-radius: rem(4);
+
+  &::before {
+    position: absolute;
+    content: '';
+    height: rem(26);
+    width: rem(30);
+    left: rem(2);
+    bottom: rem(2);
+    background-color: var(--color-surface-inverse-search);
+    transition: 0.4s;
+    border-radius: rem(4);
+  }
+}
+
+input:checked + .slider::before {
+  transform: translateX(rem(30));
+}
+
+.icon {
+  z-index: 10;
+  flex: 1;
+  color: var(--color-text);
+  width: rem(14);
+  height: rem(14);
+  fill: transparent;
+}

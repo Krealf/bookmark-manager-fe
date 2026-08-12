@@ -1,0 +1,86 @@
+.container {
+  position: relative;
+}
+
+.button {
+  color: var(--color-text);
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+
+  @include flex-center();
+}
+
+.active {
+  box-shadow: 0 0 0 rem(2) var(--color-surface);
+  outline: rem(2) solid var(--color-primary);
+  outline-offset: rem(2);
+  transition-duration: 0s !important;
+  border-radius: 50%;
+}
+
+.avatar {
+  border-radius: 50%;
+  width: rem(40);
+  height: rem(40);
+}
+
+.menu {
+  user-select: none;
+  position: absolute;
+  top: 140%;
+  right: 0;
+  transform: translateX(rem(5));
+  border-radius: rem(8);
+  border: rem(1) solid var(--color-favicon-border);
+  background-color: var(--color-surface-inverse-search);
+  display: flex;
+  flex-direction: column;
+  gap: rem(4);
+  width: rem(248);
+  z-index: 10;
+  box-shadow: 0 rem(6) rem(14) 0 rgba(34, 38, 39, 0.1);
+
+  & > li:not(:last-child) {
+    border-bottom: solid rem(2) var(--color-favicon-border);
+  }
+}
+
+.profileHeader {
+  padding: rem(12) rem(16);
+  display: flex;
+  align-items: center;
+  gap: rem(12);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.userName {
+  //  color: var(--color-text);
+}
+
+.userEmail {
+  color: var(--color-text-muted);
+}
+
+.menuItem {
+  display: flex;
+  padding: rem(16);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action {
+  display: flex;
+  gap: rem(10);
+  color: var(--color-text-muted);
+}
+
+.icon {
+  fill: transparent;
+}

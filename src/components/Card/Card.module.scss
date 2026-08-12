@@ -1,0 +1,128 @@
+.card {
+  padding: rem(16) rem(16) rem(12);
+  background-color: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: rem(16);
+  border-radius: rem(12);
+  min-height: rem(272);
+}
+
+.header {
+  display: flex;
+  gap: rem(12);
+  justify-content: space-between;
+
+  border-bottom: rem(2) solid var(--color-border);
+  padding-bottom: rem(16);
+}
+
+.info {
+  display: flex;
+  gap: rem(12);
+}
+
+.favicon {
+  height: rem(44);
+  width: rem(44);
+  box-shadow: 0 0 0 rem(1) var(--color-favicon-border);
+  border-radius: rem(8);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > img {
+    object-fit: contain;
+  }
+}
+
+.names {
+  display: flex;
+  flex-direction: column;
+  gap: rem(4);
+}
+
+.title {
+  font-size: rem(20);
+  line-height: 1.2;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.url {
+  font-size: rem(12);
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: rem(16);
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: rem(14);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.tagsList {
+  list-style: none;
+  display: flex;
+  gap: rem(8);
+}
+
+.tagsItem {
+  padding: rem(2) rem(8);
+  border-radius: rem(4);
+  background-color: var(--color-nav-item-bg);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.footer {
+  padding-top: rem(12);
+  border-top: rem(2) solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  margin-inline: rem(-16);
+  padding-inline: rem(16);
+}
+
+.statsWrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: rem(16);
+}
+
+.stat {
+  color: var(--color-text-muted);
+  display: flex;
+  gap: rem(6);
+  align-items: center;
+  justify-content: space-between;
+
+  & > svg {
+    fill: transparent;
+  }
+}
+
+.buttonPin {
+  background-color: transparent;
+  border: 0;
+  color: var(--color-text-muted);
+  border-radius: rem(8);
+  margin: 0;
+  padding: 0;
+
+  @include flex-center();
+
+  & > svg {
+    fill: transparent;
+  }
+}

@@ -1,0 +1,31 @@
+.modalWindow {
+  display: flex;
+  flex-direction: column;
+  gap: rem(24);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: rem(8);
+}
+
+.title {
+  margin: 0;
+  font-size: rem(24);
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.description {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  justify-content: end;
+  gap: rem(16);
+}

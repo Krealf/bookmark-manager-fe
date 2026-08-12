@@ -1,0 +1,14 @@
+.title {
+  font-size: fluid(24, 20);
+  font-weight: bold;
+
+  @include mobile-s {
+    line-height: 1.2;
+  }
+}
+
+.query {
+  color: var(--color-search);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
