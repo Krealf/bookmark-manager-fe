@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { Bookmark } from '@/types/bookmark';
-import { fetchApi } from '@/utils/fetchApi';
+import $api from '@/utils/fetchApi';
 
 const BASE_URL = import.meta.env.VITE_API_URL + '/bookmarks';
 
@@ -11,7 +11,7 @@ interface UpdateBookmarkArgs {
 
 export const fetchAllBookmarks = createAsyncThunk<Bookmark[]>(
   'bookmarks/fetchBookmarks',
-  async () => fetchApi(BASE_URL),
+  async () => (await $api.get('bookmarks')).data,
 );
 
 export const updateBookmarkById = createAsyncThunk<Bookmark, UpdateBookmarkArgs>(

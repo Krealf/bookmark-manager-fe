@@ -1,19 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchMe } from '@/features/Users/authActions';
+import { checkAuth, login, logout, registration } from '@/features/Users/authActions';
 
 export type AuthSlice = {
   user: {
     id: string;
     fullName: string;
     email: string;
-    avatarUrl: string;
+    avatarUrl?: string;
   } | null;
-  status: 'idle' | 'loading' | 'success' | 'unauthenticated';
+  isAuthenticated: boolean;
+  error: string | null;
 };
 
 const initialState: AuthSlice = {
   user: null,
-  status: 'idle',
+  isAuthenticated: false,
+  error: null,
 };
 
 const authSlice = createSlice({
@@ -22,16 +24,43 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMe.pending, (state) => {
-        state.status = 'loading';
+      .addCase(login.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.error = null;
       })
-      .addCase(fetchMe.fulfilled, (state, action) => {
-        state.status = 'success';
-        state.user = action.payload;
-      })
-      .addCase(fetchMe.rejected, (state) => {
-        state.status = 'unauthenticated';
+      .addCase(login.rejected, (state, action) => {
         state.user = null;
+        state.isAuthenticated = false;
+        state.error = action.payload || null;
+      })
+      .addCase(registration.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.error = null;
+      })
+      .addCase(registration.rejected, (state, action) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.error = action.payload || null;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.error = null;
+      })
+      .addCase(logout.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.error = null;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
       });
   },
 });

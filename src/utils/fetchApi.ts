@@ -1,17 +1,17 @@
-export const fetchApi = async <T>(url: string, options?: RequestInit): Promise<T> => {
-  let response: Response;
+import axios from 'axios';
+import { getToken } from '@/services/AuthService';
 
-  try {
-    response = await fetch(url, options);
-  } catch {
-    throw new Error('No connection to server.');
-  }
+export const API_URL = import.meta.env.VITE_API_URL;
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Server error' }));
+const $api = axios.create({
+  withCredentials: true,
+  baseURL: API_URL,
+});
 
-    throw new Error(error.message ?? `HTTP ${response.status}`);
-  }
+$api.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${getToken()}`;
 
-  return response.json();
-};
+  return config;
+});
+
+export default $api;

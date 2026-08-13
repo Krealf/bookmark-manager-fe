@@ -1,8 +1,22 @@
 import styles from './LoginPage.module.scss';
 import IconLightTheme from '@/assets/icons/logo-light-theme.svg';
 import IconDarkTheme from '@/assets/icons/logo-dark-theme.svg';
+import { useState } from 'react';
+import { login } from '@/features/Users/authActions';
+import { SubmitEvent } from 'react';
+import { useAppDispatch } from '@/redux-hook';
 
 export const LoginPage = () => {
+  const dispatch = useAppDispatch();
+
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    dispatch(login({ email, password }));
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -26,12 +40,21 @@ export const LoginPage = () => {
           <h1 className={styles.title}>Log in to your account</h1>
           <p className={styles.subtitle}>Welcome back! Please enter your details.</p>
         </div>
-        <form action="" method="post" className={styles.form}>
+        <form action="" method="post" className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>
               Email
             </label>
-            <input type="email" name="email" id="email" className={styles.input} required />
+            <input
+              type="email"
+              name="email"
+              id="email"
+              className={styles.input}
+              required
+              placeholder="ivan@mail.ru"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+            />
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="password" className={styles.label}>
@@ -42,7 +65,10 @@ export const LoginPage = () => {
               name="password"
               id="password"
               className={styles.input}
+              placeholder="Qwerty123%"
               required
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
           </div>
           <div className={styles.formGroup}>

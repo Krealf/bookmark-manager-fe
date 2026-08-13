@@ -1,20 +1,18 @@
-import { useAppDispatch, useAppSelector } from '@/redux-hook';
-import { useEffect } from 'react';
-import { fetchMe } from '@/features/Users/authActions';
 import { RouterProvider } from 'react-router';
 import { router } from '@/router';
+import { useEffect } from 'react';
+import { getToken } from '@/services/AuthService';
+import { useAppDispatch } from '@/redux-hook';
+import { checkAuth } from '@/features/Users/authActions';
 
 export const App = () => {
   const dispatch = useAppDispatch();
-  const { status } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(fetchMe());
-  }, [dispatch]);
-
-  if (status === 'idle' || status === 'loading') {
-    return <div>Full screen loader</div>;
-  }
+    if (getToken() == null) {
+      dispatch(checkAuth());
+    }
+  }, []);
 
   return <RouterProvider router={router} />;
 };
