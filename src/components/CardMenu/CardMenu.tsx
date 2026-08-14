@@ -2,7 +2,6 @@ import styles from './CardMenu.module.scss';
 
 import IconDots from '@/assets/icons/icon-menu-bookmark.svg?react';
 import React, { useRef, useState } from 'react';
-import type { DropdownItem, iconName } from '@my-app/shared';
 
 import IconEdit from '@/assets/icons/icon-edit.svg?react';
 import IconArchived from '@/assets/icons/icon-archive.svg?react';
@@ -13,6 +12,7 @@ import IconPin from '@/assets/icons/icon-pin.svg?react';
 import IconVisit from '@/assets/icons/icon-visit.svg?react';
 import IconDelete from '@/assets/icons/icon-delete.svg?react';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { DropdownItem, iconName } from '@/types/dropdown';
 
 const iconMap: Record<iconName, React.ReactNode> = {
   visit: <IconVisit />,

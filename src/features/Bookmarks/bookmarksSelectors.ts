@@ -3,8 +3,6 @@ import { createSelector } from '@reduxjs/toolkit';
 
 export const selectAllBookmarks = (state: RootState) => state.bookmarks.list;
 
-export const selectBookmarksStatus = (state: RootState) => state.bookmarks.status;
-
 export const selectBookmarksError = (state: RootState) => state.bookmarks.error;
 
 export const selectQuerySearch = (state: RootState) => state.bookmarks.query;

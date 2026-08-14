@@ -63,7 +63,7 @@ export const useBookmarksActions = () => {
 
   const handleAddBookmark = useCallback(
     (
-      dto: Required<Pick<Bookmark, 'title' | 'description' | 'url' | 'tags'>>,
+      dto: Required<Pick<Bookmark, 'title' | 'description' | 'websiteUrl' | 'tags'>>,
       options: {
         successMessage?: string;
         icon?: ReactNode;

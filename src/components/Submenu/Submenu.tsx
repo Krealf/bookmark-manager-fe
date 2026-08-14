@@ -1,11 +1,11 @@
 import styles from './Submenu.module.scss';
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '@/hooks/useClickOutside';
-import type { SubmenuItem } from '@my-app/shared';
 import { Button } from '@/components/Button';
 
 import IconSort from '@/assets/icons/icon-sort.svg?react';
 import IconCheck from '@/assets/icons/icon-check.svg?react';
+import { SubmenuItem } from '@/types/submenu';
 
 interface SubmenuProps {
   label: string;

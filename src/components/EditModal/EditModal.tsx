@@ -1,8 +1,9 @@
 import styles from './EditModal.module.scss';
 import { Modal } from '@/components/Modal';
-import type { Bookmark, UpdateOptions } from '@my-app/shared';
 import React, { useState } from 'react';
 import { Button } from '@/components/Button';
+import { Bookmark } from '@/types/bookmark';
+import { UpdateOptions } from '@/types/submenu';
 
 interface EditModalProps {
   title: string;
@@ -21,7 +22,7 @@ interface EditModalProps {
 export const EditModal = (props: EditModalProps) => {
   const [titleBookmark, setTitleBookmark] = useState(props.bookmark.title);
   const [descriptionBookmark, setDescriptionBookmark] = useState(props.bookmark.description);
-  const [urlBookmark, setUrlBookmark] = useState(props.bookmark.url);
+  const [urlBookmark, setUrlBookmark] = useState(props.bookmark.websiteUrl);
   const [tagsBookmark, setTagsBookmark] = useState(() => props.bookmark.tags.join(', '));
   const [isSaving, setIsSaving] = useState(false);
 
@@ -35,7 +36,7 @@ export const EditModal = (props: EditModalProps) => {
         {
           title: titleBookmark.trim(),
           description: descriptionBookmark.trim(),
-          url: urlBookmark.trim(),
+          websiteUrl: urlBookmark.trim(),
           tags: tagsBookmark.split(', ').flatMap((tag) => {
             const trimmed = tag.trim();
             return trimmed ? [trimmed] : [];

@@ -1,8 +1,8 @@
 export interface Bookmark {
   id: string;
   title: string;
-  url: string;
-  favicon: string;
+  websiteUrl: string;
+  faviconUrl: string;
   description: string;
   tags: string[];
   pinned: boolean;

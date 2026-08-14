@@ -1,9 +1,6 @@
 import styles from './ArchivedPage.module.scss';
 import { useSelector } from 'react-redux';
-import {
-  selectBookmarksStatus,
-  selectFilteredBookmarks,
-} from '@/features/Bookmarks/bookmarksSelectors';
+import { selectFilteredBookmarks } from '@/features/Bookmarks/bookmarksSelectors';
 import { useModal } from '@/hooks/useModal';
 import { Card } from '@/components/Card';
 import { ConfirmModal } from '@/components/ConfirmModal';
@@ -11,14 +8,15 @@ import { useBookmarksActions } from '@/hooks/useBookmarksActions';
 import { SearchTitle } from '@/components/SearchTitle';
 import { setCategory } from '@/features/Bookmarks/bookmarksSlice';
 import { Submenu } from '@/components/Submenu';
-import { useAppDispatch } from '@/redux-hook';
+import { useAppDispatch, useAppSelector } from '@/redux-hook';
 import { useEffect } from 'react';
 import { fetchAllBookmarks } from '@/features/Bookmarks/bookmarksActions';
 
 export const ArchivedPage = () => {
   const dispatch = useAppDispatch();
 
-  const status = useSelector(selectBookmarksStatus);
+  const { isLoading } = useAppSelector((state) => state.bookmarks);
+
   const { filteredBookmarks, query, activeTags, activeCategory } =
     useSelector(selectFilteredBookmarks);
   const { activeModal, openModal, closeModal } = useModal();
@@ -27,7 +25,7 @@ export const ArchivedPage = () => {
   const activeBookmarks = filteredBookmarks.filter((b) => b.isArchived);
 
   useEffect(() => {
-    if (status === 'idle' && !filteredBookmarks.length) {
+    if (isLoading && !filteredBookmarks.length) {
       dispatch(fetchAllBookmarks());
     }
   }, [dispatch]);
@@ -68,14 +66,14 @@ export const ArchivedPage = () => {
                   type: 'link',
                   label: 'Visit',
                   iconName: 'visit',
-                  link: bookmark.url,
+                  link: bookmark.websiteUrl,
                 },
                 {
                   type: 'action',
                   label: 'Copy URL',
                   iconName: 'copy',
-                  link: bookmark.url,
-                  onClick: () => handleCopyLink('Click to copy'),
+                  link: bookmark.websiteUrl,
+                  onClick: () => handleCopyLink(bookmark.websiteUrl),
                 },
                 {
                   type: 'action',

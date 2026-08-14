@@ -4,10 +4,14 @@ import IconDarkTheme from '@/assets/icons/logo-dark-theme.svg';
 import { useState } from 'react';
 import { login } from '@/features/Users/authActions';
 import { SubmitEvent } from 'react';
-import { useAppDispatch } from '@/redux-hook';
+import { useAppDispatch, useAppSelector } from '@/redux-hook';
+import { Navigate, useLocation } from 'react-router';
 
 export const LoginPage = () => {
   const dispatch = useAppDispatch();
+  const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -16,6 +20,14 @@ export const LoginPage = () => {
     event.preventDefault();
     dispatch(login({ email, password }));
   };
+
+  if (isLoading) {
+    return <div className="page-loader">Загрузка...</div>;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={from} replace />;
+  }
 
   return (
     <div className={styles.container}>
@@ -51,7 +63,6 @@ export const LoginPage = () => {
               id="email"
               className={styles.input}
               required
-              placeholder="ivan@mail.ru"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
@@ -65,7 +76,6 @@ export const LoginPage = () => {
               name="password"
               id="password"
               className={styles.input}
-              placeholder="Qwerty123%"
               required
               onChange={(e) => setPassword(e.target.value)}
               value={password}

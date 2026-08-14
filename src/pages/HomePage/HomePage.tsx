@@ -1,13 +1,9 @@
 import styles from './HomePage.module.scss';
 import { fetchAllBookmarks } from '@/features/Bookmarks/bookmarksActions';
 import { useSelector } from 'react-redux';
-import {
-  selectBookmarksError,
-  selectBookmarksStatus,
-  selectFilteredBookmarks,
-} from '@/features/Bookmarks/bookmarksSelectors';
+import { selectFilteredBookmarks } from '@/features/Bookmarks/bookmarksSelectors';
 import { Card } from '@/components/Card';
-import { useAppDispatch } from '@/redux-hook';
+import { useAppDispatch, useAppSelector } from '@/redux-hook';
 import { useModal } from '@/hooks/useModal';
 import { EditModal } from '@/components/EditModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
@@ -24,15 +20,13 @@ export const HomePage = () => {
 
   const { filteredBookmarks, query, activeTags, activeCategory } =
     useSelector(selectFilteredBookmarks);
-  const status = useSelector(selectBookmarksStatus);
+  const { isLoading, error } = useAppSelector((state) => state.bookmarks);
 
   const { activeModal, openModal, closeModal } = useModal();
   const { handleUpdateBookmark, handleCopyLink } = useBookmarksActions();
 
-  const error = useSelector(selectBookmarksError);
-
   useEffect(() => {
-    if (status === 'idle' && !filteredBookmarks.length) {
+    if (isLoading && !filteredBookmarks.length) {
       dispatch(fetchAllBookmarks());
     }
   }, [dispatch]);
@@ -73,26 +67,27 @@ export const HomePage = () => {
           />
         </div>
         <div className={styles.container}>
-          {status === 'loading' &&
+          {isLoading &&
             filteredBookmarks.length === 0 &&
             Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)}
 
           {activeBookmarks.map((bookmark) => (
             <Card
               bookmark={bookmark}
+              key={bookmark.id}
               menuItems={[
                 {
                   type: 'link',
                   label: 'Visit',
                   iconName: 'visit',
-                  link: bookmark.url,
+                  link: bookmark.websiteUrl,
                 },
                 {
                   type: 'action',
                   label: 'Copy URL',
                   iconName: 'copy',
-                  link: bookmark.url,
-                  onClick: () => handleCopyLink(bookmark.url),
+                  link: bookmark.websiteUrl,
+                  onClick: () => handleCopyLink(bookmark.websiteUrl),
                 },
                 {
                   type: 'action',
@@ -128,7 +123,6 @@ export const HomePage = () => {
                     }),
                 },
               ]}
-              key={bookmark.id}
             />
           ))}
         </div>

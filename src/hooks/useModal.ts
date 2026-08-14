@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { Bookmark } from '@my-app/shared';
+import { Bookmark } from '@/types/bookmark';
 
 // Определяем возможные типы модального окна
 type ModalState =

@@ -8,7 +8,7 @@ import {
 } from '@/features/Bookmarks/bookmarksActions';
 
 export type bookmarksSlice = {
-  status: 'idle' | 'loading' | 'error';
+  isLoading: boolean;
   list: Bookmark[];
   previousList: Bookmark[] | null;
   selectedTags: string[];
@@ -18,7 +18,7 @@ export type bookmarksSlice = {
 };
 
 const initialState: bookmarksSlice = {
-  status: 'idle',
+  isLoading: true,
   list: [],
   previousList: null,
   selectedTags: [],
@@ -50,15 +50,16 @@ const bookmarksSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllBookmarks.pending, (state) => {
-        state.status = 'loading';
+        state.isLoading = true;
+        state.error = null;
       })
       .addCase(fetchAllBookmarks.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.isLoading = false;
         state.list = action.payload;
       })
       .addCase(fetchAllBookmarks.rejected, (state, action) => {
-        state.status = 'error';
-        state.error = action.error.message ?? 'Failed to load bookmarks';
+        state.isLoading = false;
+        state.error = action.payload?.message || null;
       })
       .addCase(updateBookmarkById.pending, (state, action) => {
         state.previousList = Array.from(state.list);
@@ -70,33 +71,42 @@ const bookmarksSlice = createSlice({
           state.list[index] = { ...state.list[index], ...dto };
         }
 
-        state.status = 'loading';
+        state.isLoading = true;
       })
       .addCase(updateBookmarkById.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.isLoading = false;
         const index = state.list.findIndex((item) => item.id === action.payload.id);
 
         if (index !== -1) {
           state.list[index] = action.payload;
         }
       })
-      .addCase(updateBookmarkById.rejected, (state) => {
+      .addCase(updateBookmarkById.rejected, (state, action) => {
         state.list = state.previousList ?? state.list;
-        state.status = 'error';
+        state.isLoading = false;
+        state.error = action.payload?.message || null;
       })
       .addCase(deleteBookmarkById.pending, (state) => {
-        state.status = 'loading';
+        state.isLoading = true;
       })
       .addCase(deleteBookmarkById.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.isLoading = false;
         state.list = state.list.filter((item) => item.id !== action.payload);
       })
+      .addCase(deleteBookmarkById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || null;
+      })
       .addCase(createBookmark.pending, (state) => {
-        state.status = 'loading';
+        state.isLoading = true;
       })
       .addCase(createBookmark.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.isLoading = false;
         state.list.push(action.payload);
+      })
+      .addCase(createBookmark.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || null;
       });
   },
 });

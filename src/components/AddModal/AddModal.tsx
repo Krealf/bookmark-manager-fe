@@ -2,7 +2,8 @@ import styles from './AddModal.module.scss';
 import React, { useState } from 'react';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/Button';
-import type { Bookmark, UpdateOptions } from '@my-app/shared';
+import { Bookmark } from '@/types/bookmark';
+import { UpdateOptions } from '@/types/submenu';
 
 interface AddModalProps {
   title: string;
@@ -11,7 +12,7 @@ interface AddModalProps {
   danger?: boolean;
   onClose: () => void;
   onSave: (
-    dto: Required<Pick<Bookmark, 'title' | 'description' | 'url' | 'tags'>>,
+    dto: Required<Pick<Bookmark, 'title' | 'description' | 'websiteUrl' | 'tags'>>,
     options: UpdateOptions,
   ) => void;
 }
@@ -19,7 +20,7 @@ interface AddModalProps {
 export const AddModal = (props: AddModalProps) => {
   const [titleBookmark, setTitleBookmark] = useState('');
   const [descriptionBookmark, setDescriptionBookmark] = useState('');
-  const [urlBookmark, setUrlBookmark] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
   const [tagsBookmark, setTagsBookmark] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -31,7 +32,7 @@ export const AddModal = (props: AddModalProps) => {
       props.onSave(
         {
           title: titleBookmark,
-          url: urlBookmark,
+          websiteUrl,
           description: descriptionBookmark,
           tags: tagsBookmark,
         },
@@ -85,8 +86,8 @@ export const AddModal = (props: AddModalProps) => {
             </div>
             <input
               className={styles.input}
-              value={urlBookmark}
-              onChange={(e) => setUrlBookmark(e.target.value)}
+              value={websiteUrl}
+              onChange={(e) => setWebsiteUrl(e.target.value)}
               required
               name=""
             />

@@ -9,10 +9,10 @@ export const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (getToken() == null) {
+    if (getToken()) {
       dispatch(checkAuth());
     }
-  }, []);
+  }, [dispatch]);
 
   return <RouterProvider router={router} />;
 };

@@ -1,5 +1,4 @@
 import styles from './Card.module.scss';
-import type { Bookmark, DropdownItem } from '@my-app/shared';
 
 import IconVisitCount from '@/assets/icons/icon-visit-count.svg?react';
 import IconLastVisited from '@/assets/icons/icon-last-visited.svg?react';
@@ -9,6 +8,8 @@ import IconPin from '@/assets/icons/icon-pin.svg?react';
 
 import { CardMenu } from '@/components/CardMenu';
 import { useBookmarksActions } from '@/hooks/useBookmarksActions';
+import { Bookmark } from '@/types/bookmark';
+import { DropdownItem } from '@/types/dropdown';
 
 interface CardProps {
   bookmark: Bookmark;
@@ -17,7 +18,7 @@ interface CardProps {
 
 export const Card = ({ bookmark, menuItems }: CardProps) => {
   const { handleUpdateBookmark } = useBookmarksActions();
-  const faviconUrl = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${bookmark.url}&size=128`;
+  const faviconUrl = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${bookmark.websiteUrl}&size=128`;
 
   return (
     <article className={styles.card}>
@@ -30,7 +31,7 @@ export const Card = ({ bookmark, menuItems }: CardProps) => {
             <div className={styles.names}>
               <h3 className={styles.title}>{bookmark.title}</h3>
               <div className={styles.url}>
-                <p>{bookmark.url}</p>
+                <p>{bookmark.websiteUrl}</p>
               </div>
             </div>
           </div>

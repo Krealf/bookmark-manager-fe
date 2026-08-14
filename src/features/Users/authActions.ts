@@ -1,87 +1,68 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import $api, { API_URL } from '@/utils/fetchApi';
 import { AuthResponse } from '@/models/response/AuthResponse';
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
 import { removeToken, setToken } from '@/services/AuthService';
+import { ApiErrorPayload, extractApiError } from '@/utils/handleAxiosError';
 
 interface LoginArgs {
   email: string;
   password: string;
 }
 
-export const login = createAsyncThunk<AuthResponse, LoginArgs, { rejectValue: string }>(
+export const login = createAsyncThunk<AuthResponse, LoginArgs, { rejectValue: ApiErrorPayload }>(
   'auth/login',
   async (dto, { rejectWithValue }) => {
     try {
-      console.log('Начало async login:', dto);
       const { data } = await $api.post<AuthResponse>('auth/login', dto);
-      console.log('Ответ от сервера:', data);
       setToken(data.accessToken);
 
       return data;
     } catch (error) {
-      console.log('Начало блока catch. Ошибка:', error);
-      return rejectWithValue(
-        isAxiosError(error)
-          ? (error.response?.data?.message ?? 'Ошибка авторизации')
-          : 'Ошибка авторизации',
-      );
+      return rejectWithValue(extractApiError(error));
     }
   },
 );
 
-export const registration = createAsyncThunk<AuthResponse, LoginArgs, { rejectValue: string }>(
-  'auth/register',
-  async (dto, { rejectWithValue }) => {
-    try {
-      const { data } = await $api.post<AuthResponse>('auth/register', dto);
-      setToken(data.accessToken);
-
-      return data;
-    } catch (error) {
-      return rejectWithValue(
-        isAxiosError(error)
-          ? (error.response?.data?.message ?? 'Ошибка авторизации')
-          : 'Ошибка авторизации',
-      );
-    }
-  },
-);
-
-export const logout = createAsyncThunk('auth/logout', async () => {
+export const registration = createAsyncThunk<
+  AuthResponse,
+  LoginArgs,
+  { rejectValue: ApiErrorPayload }
+>('auth/register', async (dto, { rejectWithValue }) => {
   try {
-    const { data } = await $api.post<AuthResponse>('auth/logout');
-    removeToken();
+    const { data } = await $api.post<AuthResponse>('auth/register', dto);
+    setToken(data.accessToken);
 
     return data;
   } catch (error) {
-    if (isAxiosError(error)) {
-      console.log(error.response?.data?.message);
-    }
+    return rejectWithValue(extractApiError(error));
   }
 });
 
-export const checkAuth = createAsyncThunk<AuthResponse, void, { rejectValue: string }>(
+export const logout = createAsyncThunk<void, void, { rejectValue: ApiErrorPayload }>(
+  'auth/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      await $api.post<AuthResponse>('auth/logout');
+      removeToken();
+    } catch (error) {
+      return rejectWithValue(extractApiError(error));
+    }
+  },
+);
+
+export const checkAuth = createAsyncThunk<AuthResponse, void, { rejectValue: ApiErrorPayload }>(
   'auth/check',
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, {
         withCredentials: true,
       });
-      console.log(response);
       setToken(response.data.accessToken);
 
       return response.data;
     } catch (error) {
-      if (isAxiosError(error)) {
-        console.log(error.response?.data?.message);
-      }
-
-      return rejectWithValue(
-        isAxiosError(error)
-          ? (error.response?.data?.message ?? 'Ошибка при разборе ответа ошибки')
-          : 'Ошибка checkAuth',
-      );
+      return rejectWithValue(extractApiError(error));
     }
   },
 );

@@ -6,12 +6,16 @@ import avatarImage from '@/assets/icons/image-avatar.webp';
 import IconTheme from '@/assets/icons/icon-theme.svg?react';
 import IconLogout from '@/assets/icons/icon-logout.svg?react';
 import { ToggleSwitch } from '@/components/ToggleSwitch';
+import { useAppDispatch, useAppSelector } from '@/redux-hook';
+import { logout } from '@/features/Users/authActions';
 
 export const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const refMenu = useRef<HTMLUListElement>(null);
   useClickOutside(refMenu, () => setIsOpen(false));
   const toggleMenu = () => setIsOpen(!isOpen);
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
     <div className={styles.container}>
@@ -46,8 +50,8 @@ export const UserMenu = () => {
               loading="lazy"
             />
             <div className={styles.userInfo}>
-              <div className={styles.userName}>Emily Carter</div>
-              <div className={styles.userEmail}>emily101@email.com</div>
+              <div className={styles.userName}>{user ? user.fullName : 'No data'}</div>
+              <div className={styles.userEmail}>{user ? user.email : 'No data'}</div>
             </div>
           </li>
           <li className={styles.menuItem} role="menuitem">
@@ -58,10 +62,15 @@ export const UserMenu = () => {
             <ToggleSwitch />
           </li>
           <li className={styles.menuItem} role="menuitem">
-            <div className={styles.action}>
+            <button
+              className={styles.action}
+              aria-label="Logout"
+              type="button"
+              onClick={() => dispatch(logout())}
+            >
               <IconLogout className={styles.icon} />
-              <div className={styles.label}>Logout</div>
-            </div>
+              <span className={styles.label}>Logout</span>
+            </button>
           </li>
         </ul>
       )}
