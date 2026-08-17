@@ -3,80 +3,38 @@ import {
   createBookmark,
   deleteBookmarkById,
   updateBookmarkById,
+  visitBookmarkById,
 } from '@/features/Bookmarks/bookmarksActions';
-import { toast } from 'sonner';
-import { ReactNode, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Bookmark } from '@/types/bookmark';
 
 export const useBookmarksActions = () => {
   const dispatch = useAppDispatch();
 
   const handleUpdateBookmark = useCallback(
-    (
-      id: Bookmark['id'],
-      dto: Partial<Omit<Bookmark, 'id' | 'createdAt'>>,
-      options: {
-        successMessage?: string;
-        icon?: ReactNode;
-      } = {},
-    ) => {
-      const { successMessage = 'Bookmark updated' } = options;
+    async (id: Bookmark['id'], dto: Partial<Omit<Bookmark, 'id' | 'createdAt'>>) => {
+      return dispatch(updateBookmarkById({ id, dto })).unwrap();
+    },
+    [dispatch],
+  );
 
-      toast.promise(dispatch(updateBookmarkById({ id, dto })).unwrap(), {
-        loading: 'Saving...',
-        success: successMessage,
-        error: (err) => err.message,
-        closeButton: true,
-      });
+  const handleVisitBookmark = useCallback(
+    async (id: Bookmark['id']) => {
+      return dispatch(visitBookmarkById(id)).unwrap();
     },
     [dispatch],
   );
 
   const handleDeleteBookmark = useCallback(
-    (
-      id: Bookmark['id'],
-      options: {
-        successMessage?: string;
-        icon?: ReactNode;
-      },
-    ) => {
-      const { successMessage = 'Bookmark updated' } = options;
-
-      toast.promise(dispatch(deleteBookmarkById(id)).unwrap(), {
-        loading: 'Saving...',
-        success: successMessage,
-        error: (err) => err.message,
-        closeButton: true,
-      });
+    async (id: Bookmark['id']) => {
+      return dispatch(deleteBookmarkById(id)).unwrap();
     },
     [dispatch],
   );
 
-  const handleCopyLink = useCallback(async (linkToCopy: string) => {
-    try {
-      await navigator.clipboard.writeText(linkToCopy);
-      toast.success('Link copied to clipboard.');
-    } catch (err) {
-      console.error('Ошибка при копировании: ', err);
-    }
-  }, []);
-
   const handleAddBookmark = useCallback(
-    (
-      dto: Required<Pick<Bookmark, 'title' | 'description' | 'websiteUrl' | 'tags'>>,
-      options: {
-        successMessage?: string;
-        icon?: ReactNode;
-      },
-    ) => {
-      const { successMessage = 'Bookmark updated' } = options;
-
-      toast.promise(dispatch(createBookmark(dto)).unwrap(), {
-        loading: 'Saving...',
-        success: successMessage,
-        error: (err) => err.message,
-        closeButton: true,
-      });
+    async (dto: Required<Pick<Bookmark, 'title' | 'description' | 'websiteUrl' | 'tags'>>) => {
+      return dispatch(createBookmark(dto)).unwrap();
     },
     [dispatch],
   );
@@ -84,7 +42,7 @@ export const useBookmarksActions = () => {
   return {
     handleUpdateBookmark,
     handleDeleteBookmark,
-    handleCopyLink,
     handleAddBookmark,
+    handleVisitBookmark,
   };
 };

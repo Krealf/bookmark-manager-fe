@@ -25,6 +25,14 @@ export const Layout = () => {
     openModal({ type: 'add' });
   }, [openModal]);
 
+  const handleNavOnClose = () => {
+    const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+    if (isMobile()) {
+      close();
+    }
+  };
+
   return (
     <div className={styles.layout}>
       <header className={styles.header}>
@@ -64,7 +72,7 @@ export const Layout = () => {
         aria-label="Close menu"
       />
 
-      <SideBar className={styles.sidebar} id="sidebar" isOpen={isOpen} />
+      <SideBar className={styles.sidebar} id="sidebar" isOpen={isOpen} onClose={handleNavOnClose} />
 
       <main className={styles.main}>
         <Outlet />
@@ -88,6 +96,7 @@ export const Layout = () => {
             color: 'var(--color-text)',
             border: '1px solid var(--color-border)',
             boxShadow: '0 6px 9px 0 rgba(21, 21, 21, 0.08)',
+            userSelect: 'none',
           },
         }}
       />

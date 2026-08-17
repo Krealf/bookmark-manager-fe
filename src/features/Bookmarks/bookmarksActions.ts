@@ -36,15 +36,29 @@ export const updateBookmarkById = createAsyncThunk<
   }
 });
 
+export const visitBookmarkById = createAsyncThunk<
+  Bookmark,
+  Bookmark['id'],
+  { rejectValue: ApiErrorPayload }
+>('bookmarks/visit', async (id, { rejectWithValue }) => {
+  try {
+    const response = await $api.post(`api/bookmarks/${id}/visit`);
+
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(extractApiError(error));
+  }
+});
+
 export const deleteBookmarkById = createAsyncThunk<
   Bookmark['id'],
   Bookmark['id'],
   { rejectValue: ApiErrorPayload }
 >('bookmarks/deleteById', async (id, { rejectWithValue }) => {
   try {
-    const response = await $api.delete(`api/bookmarks/${id}`);
+    await $api.delete(`api/bookmarks/${id}`);
 
-    return response.data;
+    return id;
   } catch (error) {
     return rejectWithValue(extractApiError(error));
   }

@@ -12,32 +12,106 @@ import { setCategory } from '@/features/Bookmarks/bookmarksSlice';
 import { useBookmarksActions } from '@/hooks/useBookmarksActions';
 import { SearchTitle } from '@/components/SearchTitle';
 import { CardSkeleton } from '@/components/CardSkeleton';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
+import { getMenuItems } from '@/utils/getMenuItems';
+import { Bookmark } from '@/types/bookmark';
 
 export const HomePage = () => {
   const dispatch = useAppDispatch();
 
   const { filteredBookmarks, query, activeTags, activeCategory } =
     useSelector(selectFilteredBookmarks);
-  const { isLoading, error } = useAppSelector((state) => state.bookmarks);
+  const { isFetched } = useAppSelector((state) => state.bookmarks);
 
-  const { activeModal, openModal, closeModal } = useModal();
-  const { handleUpdateBookmark, handleCopyLink } = useBookmarksActions();
+  const { activeModal, closeModal, openModal } = useModal();
+  const { handleUpdateBookmark, handleVisitBookmark } = useBookmarksActions();
 
   useEffect(() => {
-    if (isLoading && !filteredBookmarks.length) {
+    if (!isFetched) {
       dispatch(fetchAllBookmarks());
     }
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+  }, [isFetched]);
 
   const activeBookmarks = filteredBookmarks.filter((b) => !b.isArchived);
+
+  const handleVisitMenuClick = useCallback(
+    async (bookmarkId: Bookmark['id']) => {
+      const updatePromise = handleVisitBookmark(bookmarkId);
+
+      toast.promise(updatePromise, {
+        loading: 'Update......',
+        success: 'Updated.',
+        error: 'Failed to update bookmark.',
+      });
+
+      await updatePromise;
+    },
+    [handleUpdateBookmark],
+  );
+
+  const handleCopyMenuClick = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard.');
+    } catch (error) {
+      console.log('Ошибка при копировании ссылки', error);
+      toast.error('Failed to copy link.');
+    }
+  };
+
+  const handlePinMenuClick = useCallback(
+    async (bookmarkId: Bookmark['id'], isPinned: boolean) => {
+      const updatePromise = handleUpdateBookmark(bookmarkId, {
+        pinned: !isPinned,
+      });
+
+      toast.promise(updatePromise, {
+        loading: isPinned ? 'Unpinning...' : 'Pinning to top...',
+        success: isPinned ? 'Unpinned.' : 'Pinned to top',
+        error: 'Failed to update bookmark.',
+      });
+
+      await updatePromise;
+    },
+    [handleUpdateBookmark],
+  );
+
+  const handleOpenArchiveConfirm = useCallback(
+    async (bookmark: Bookmark) =>
+      openModal({
+        type: 'confirm-archive',
+        bookmark: bookmark,
+      }),
+    [openModal],
+  );
+
+  const handleConfirmArchive = useCallback(async () => {
+    if (activeModal && activeModal.type === 'confirm-archive') {
+      const { id } = activeModal.bookmark;
+
+      const updatePromise = handleUpdateBookmark(id, {
+        isArchived: true,
+      });
+
+      toast.promise(updatePromise, {
+        loading: 'Archiving...',
+        success: 'Archive.',
+        error: 'Failed to archive bookmark.',
+      });
+
+      await updatePromise;
+    }
+  }, [activeModal, handleUpdateBookmark]);
+
+  const handleOpenEditConfirm = useCallback(
+    async (bookmark: Bookmark) =>
+      openModal({
+        type: 'edit',
+        bookmark: bookmark,
+      }),
+    [openModal],
+  );
 
   return (
     <>
@@ -67,62 +141,24 @@ export const HomePage = () => {
           />
         </div>
         <div className={styles.container}>
-          {isLoading &&
+          {!isFetched &&
             filteredBookmarks.length === 0 &&
-            Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)}
+            Array.from({ length: 9 }).map((_, i) => <CardSkeleton key={i} />)}
 
           {activeBookmarks.map((bookmark) => (
             <Card
               bookmark={bookmark}
               key={bookmark.id}
-              menuItems={[
-                {
-                  type: 'link',
-                  label: 'Visit',
-                  iconName: 'visit',
-                  link: bookmark.websiteUrl,
+              menuItems={getMenuItems(bookmark, {
+                items: ['visit', 'copy', 'pin', 'edit', 'archive'],
+                callbacks: {
+                  onVisit: handleVisitMenuClick,
+                  onCopy: handleCopyMenuClick,
+                  onPin: handlePinMenuClick,
+                  onToggleArchive: handleOpenArchiveConfirm,
+                  onEdit: handleOpenEditConfirm,
                 },
-                {
-                  type: 'action',
-                  label: 'Copy URL',
-                  iconName: 'copy',
-                  link: bookmark.websiteUrl,
-                  onClick: () => handleCopyLink(bookmark.websiteUrl),
-                },
-                {
-                  type: 'action',
-                  label: bookmark.pinned ? 'Unpin' : 'Pin',
-                  iconName: bookmark.pinned ? 'unpin' : 'pin',
-                  onClick: () => {
-                    handleUpdateBookmark(
-                      bookmark.id,
-                      {
-                        pinned: !bookmark.pinned,
-                      },
-                      {
-                        successMessage: `Bookmark ${bookmark.pinned ? 'unpinned' : 'pinned to top'}.`,
-                      },
-                    );
-                  },
-                },
-                {
-                  type: 'action',
-                  label: 'Edit',
-                  iconName: 'edit',
-                  onClick: () => openModal({ type: 'edit', bookmark, id: bookmark.id }),
-                },
-                {
-                  type: 'action',
-                  label: bookmark.isArchived ? 'Unarchive' : 'Archive',
-                  iconName: bookmark.isArchived ? 'unarchived' : 'archived',
-                  onClick: () =>
-                    openModal({
-                      type: 'confirm-archive',
-                      bookmark,
-                      id: bookmark.id,
-                    }),
-                },
-              ]}
+              })}
             />
           ))}
         </div>
@@ -145,17 +181,7 @@ export const HomePage = () => {
           description="Are you sure you want to archive this bookmark?"
           confirmLabel="Archive"
           onClose={closeModal}
-          onSave={() =>
-            handleUpdateBookmark(
-              activeModal.bookmark.id,
-              {
-                isArchived: !activeModal.bookmark.isArchived,
-              },
-              {
-                successMessage: 'Bookmark archived.',
-              },
-            )
-          }
+          onConfirm={handleConfirmArchive}
         />
       )}
     </>

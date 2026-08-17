@@ -63,6 +63,7 @@
 }
 
 .textarea {
+  min-height: rem(100);
   resize: vertical;
 }
 
@@ -70,4 +71,14 @@
   display: flex;
   justify-content: end;
   gap: rem(16);
+
+  @include mobile() {
+    justify-content: space-between;
+  }
+}
+
+.cancel {
+  @include mobile() {
+    flex: 1;
+  }
 }

@@ -4,6 +4,8 @@ import { Modal } from '@/components/Modal';
 import { Button } from '@/components/Button';
 import { Bookmark } from '@/types/bookmark';
 import { UpdateOptions } from '@/types/submenu';
+import { useBookmarksActions } from '@/hooks/useBookmarksActions';
+import { toast } from 'sonner';
 
 interface AddModalProps {
   title: string;
@@ -23,26 +25,30 @@ export const AddModal = (props: AddModalProps) => {
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [tagsBookmark, setTagsBookmark] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const { handleAddBookmark } = useBookmarksActions();
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSaving(true);
 
+    const updatedPromise = handleAddBookmark({
+      title: titleBookmark,
+      websiteUrl,
+      description: descriptionBookmark,
+      tags: tagsBookmark,
+    });
+
+    toast.promise(updatedPromise, {
+      loading: 'Creating a bookmark...',
+      success: 'The bookmark has been created.',
+      error: 'Error while creating a bookmark.',
+    });
+
     try {
-      props.onSave(
-        {
-          title: titleBookmark,
-          websiteUrl,
-          description: descriptionBookmark,
-          tags: tagsBookmark,
-        },
-        {
-          successMessage: 'Bookmark added successfully.',
-        },
-      );
+      await updatedPromise;
       props.onClose();
-    } catch (err) {
-      console.error('', err);
+    } catch (error) {
+      console.error('Error while creating the bookmark. Log:', error);
     } finally {
       setIsSaving(false);
     }
@@ -66,6 +72,7 @@ export const AddModal = (props: AddModalProps) => {
               onChange={(e) => setTitleBookmark(e.target.value)}
               required
               name=""
+              autoFocus
             />
           </label>
           <label className={styles.field}>

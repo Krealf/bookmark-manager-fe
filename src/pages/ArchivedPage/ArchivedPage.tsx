@@ -9,26 +9,90 @@ import { SearchTitle } from '@/components/SearchTitle';
 import { setCategory } from '@/features/Bookmarks/bookmarksSlice';
 import { Submenu } from '@/components/Submenu';
 import { useAppDispatch, useAppSelector } from '@/redux-hook';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { fetchAllBookmarks } from '@/features/Bookmarks/bookmarksActions';
+import { getMenuItems } from '@/utils/getMenuItems';
+import { toast } from 'sonner';
+import { Bookmark } from '@/types/bookmark';
 
 export const ArchivedPage = () => {
   const dispatch = useAppDispatch();
 
-  const { isLoading } = useAppSelector((state) => state.bookmarks);
-
   const { filteredBookmarks, query, activeTags, activeCategory } =
     useSelector(selectFilteredBookmarks);
   const { activeModal, openModal, closeModal } = useModal();
-  const { handleDeleteBookmark, handleUpdateBookmark, handleCopyLink } = useBookmarksActions();
+  const { handleUpdateBookmark, handleDeleteBookmark } = useBookmarksActions();
+  const { isFetched } = useAppSelector((state) => state.bookmarks);
 
   const activeBookmarks = filteredBookmarks.filter((b) => b.isArchived);
 
   useEffect(() => {
-    if (isLoading && !filteredBookmarks.length) {
+    if (!isFetched) {
       dispatch(fetchAllBookmarks());
     }
-  }, [dispatch]);
+  }, [isFetched]);
+
+  const handleCopyMenuClick = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard.');
+    } catch (error) {
+      console.error('Error while copying the link. Log:', error);
+      toast.error('Failed to copy link.');
+    }
+  };
+
+  const handleOpenArchiveConfirm = useCallback(
+    async (bookmark: Bookmark) =>
+      openModal({
+        type: 'confirm-unarchive',
+        bookmark: bookmark,
+      }),
+    [openModal],
+  );
+
+  const handleConfirmUnarchive = useCallback(async () => {
+    if (activeModal && activeModal.type === 'confirm-unarchive') {
+      const { id } = activeModal.bookmark;
+
+      const updatePromise = handleUpdateBookmark(id, {
+        isArchived: false,
+      });
+
+      toast.promise(updatePromise, {
+        loading: 'Unarchiving...',
+        success: 'Unarchive',
+        error: 'Failed to unarchive bookmark.',
+      });
+
+      await updatePromise;
+    }
+  }, [activeModal, handleUpdateBookmark]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (activeModal && activeModal.type === 'confirm-delete') {
+      const { id } = activeModal.bookmark;
+
+      const updatePromise = handleDeleteBookmark(id);
+
+      toast.promise(updatePromise, {
+        loading: 'Deletion......',
+        success: 'The bookmark has been deleted.',
+        error: 'The bookmark could not be deleted.',
+      });
+
+      await updatePromise;
+    }
+  }, [activeModal, handleDeleteBookmark]);
+
+  const handleOpenDeleteConfirm = useCallback(
+    async (bookmark: Bookmark) =>
+      openModal({
+        type: 'confirm-delete',
+        bookmark,
+      }),
+    [openModal],
+  );
 
   return (
     <>
@@ -61,44 +125,15 @@ export const ArchivedPage = () => {
           {activeBookmarks.map((bookmark) => (
             <Card
               bookmark={bookmark}
-              menuItems={[
-                {
-                  type: 'link',
-                  label: 'Visit',
-                  iconName: 'visit',
-                  link: bookmark.websiteUrl,
-                },
-                {
-                  type: 'action',
-                  label: 'Copy URL',
-                  iconName: 'copy',
-                  link: bookmark.websiteUrl,
-                  onClick: () => handleCopyLink(bookmark.websiteUrl),
-                },
-                {
-                  type: 'action',
-                  label: bookmark.isArchived ? 'Unarchive' : 'Archive',
-                  iconName: bookmark.isArchived ? 'unarchived' : 'archived',
-                  onClick: () =>
-                    openModal({
-                      type: 'confirm-unarchive',
-                      bookmark,
-                      id: bookmark.id,
-                    }),
-                },
-                {
-                  type: 'action',
-                  label: 'Delete Permanently',
-                  iconName: 'delete',
-                  onClick: () =>
-                    openModal({
-                      type: 'confirm-delete',
-                      bookmark,
-                      id: bookmark.id,
-                    }),
-                },
-              ]}
               key={bookmark.id}
+              menuItems={getMenuItems(bookmark, {
+                items: ['visit', 'copy', 'archive', 'delete'],
+                callbacks: {
+                  onCopy: handleCopyMenuClick,
+                  onToggleArchive: handleOpenArchiveConfirm,
+                  onDelete: handleOpenDeleteConfirm,
+                },
+              })}
             />
           ))}
         </div>
@@ -110,17 +145,7 @@ export const ArchivedPage = () => {
           description="Move this bookmark back to your active list?"
           confirmLabel="Unarchive"
           onClose={closeModal}
-          onSave={() =>
-            handleUpdateBookmark(
-              activeModal.bookmark.id,
-              {
-                isArchived: !activeModal.bookmark.isArchived,
-              },
-              {
-                successMessage: 'Bookmark unarchived.',
-              },
-            )
-          }
+          onConfirm={handleConfirmUnarchive}
         />
       )}
 
@@ -131,11 +156,7 @@ export const ArchivedPage = () => {
           confirmLabel="Delete Permanently"
           danger={true}
           onClose={closeModal}
-          onSave={() =>
-            handleDeleteBookmark(activeModal.bookmark.id, {
-              successMessage: 'Bookmark deleted.',
-            })
-          }
+          onConfirm={handleConfirmDelete}
         />
       )}
     </>

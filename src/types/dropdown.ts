@@ -1,4 +1,4 @@
-export type iconName =
+export type CardMenuIcon =
   | 'visit'
   | 'copy'
   | 'pin'
@@ -9,21 +9,20 @@ export type iconName =
   | 'delete';
 
 // Тип для ссылки
-type DropdownLink = {
+type CardMenuLink = {
   type: 'link';
   label: string;
-  iconName: iconName;
-  link: string; // Обязательно поле link
+  iconName: CardMenuIcon;
+  link: string;
+  onClick?: () => void;
 };
 
 // Тип для кнопки действия
-type DropdownAction = {
+type CardMenuAction = {
   type: 'action';
-  link?: string;
   label: string;
-  iconName: iconName;
+  iconName: CardMenuIcon;
   onClick: () => void;
-  successMessage?: string;
 };
 
-export type DropdownItem = DropdownLink | DropdownAction;
+export type CardMenuItem = CardMenuLink | CardMenuAction;

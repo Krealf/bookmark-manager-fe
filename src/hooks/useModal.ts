@@ -4,10 +4,10 @@ import { Bookmark } from '@/types/bookmark';
 // Определяем возможные типы модального окна
 type ModalState =
   | { type: 'add' }
-  | { type: 'edit'; bookmark: Bookmark; id: string }
-  | { type: 'confirm-archive'; bookmark: Bookmark; id: string }
-  | { type: 'confirm-unarchive'; bookmark: Bookmark; id: string }
-  | { type: 'confirm-delete'; bookmark: Bookmark; id: string }
+  | { type: 'edit'; bookmark: Bookmark }
+  | { type: 'confirm-archive'; bookmark: Bookmark }
+  | { type: 'confirm-unarchive'; bookmark: Bookmark }
+  | { type: 'confirm-delete'; bookmark: Bookmark }
   | null;
 
 export function useModal() {

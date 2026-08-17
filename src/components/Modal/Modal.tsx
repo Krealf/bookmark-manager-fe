@@ -9,26 +9,33 @@ interface ModalProps {
 }
 
 export const Modal = ({ onClose, children, className, title }: ModalProps) => {
-  const dialogRef = useRef<HTMLDialogElement>(null); // Создаём ссылку на само меню для отслеживания клика
+  const mouseDownTarget = useRef<EventTarget | null>(null);
 
   useEffect(() => {
-    dialogRef.current?.showModal();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === dialogRef.current) onClose();
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget && mouseDownTarget.current === event.target) {
+      onClose();
+    }
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={`${styles.overlay} ${className}`}
-      onClose={onClose}
+    <div
+      role="dialog"
+      className={`${styles.overlay}`}
+      onMouseDown={(e) => (mouseDownTarget.current = e.target)}
       onClick={handleBackdropClick}
       aria-modal="true"
       aria-label={title}
     >
-      {children}
-    </dialog>
+      <div className={`${styles.modalWindow} ${className || ''}`}>{children}</div>
+    </div>
   );
 };

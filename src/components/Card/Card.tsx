@@ -8,17 +8,44 @@ import IconPin from '@/assets/icons/icon-pin.svg?react';
 
 import { CardMenu } from '@/components/CardMenu';
 import { useBookmarksActions } from '@/hooks/useBookmarksActions';
+import { useCallback } from 'react';
 import { Bookmark } from '@/types/bookmark';
-import { DropdownItem } from '@/types/dropdown';
+import { toast } from 'sonner';
+import { CardMenuItem } from '@/types/dropdown';
 
 interface CardProps {
   bookmark: Bookmark;
-  menuItems: DropdownItem[];
+  menuItems: CardMenuItem[];
 }
 
 export const Card = ({ bookmark, menuItems }: CardProps) => {
-  const { handleUpdateBookmark } = useBookmarksActions();
+  const { handleUpdateBookmark, handleVisitBookmark } = useBookmarksActions();
   const faviconUrl = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${bookmark.websiteUrl}&size=128`;
+
+  const handleFooterPinClick = useCallback(async () => {
+    try {
+      await handleUpdateBookmark(bookmark.id, {
+        pinned: !bookmark.pinned,
+      });
+
+      toast.success(bookmark.pinned ? 'Unpinned' : 'Pinned to top');
+    } catch (error) {
+      console.error('Error while bookmarking. Log:', error);
+      toast.error('Failed to update bookmark');
+    }
+  }, [handleUpdateBookmark, bookmark.id, bookmark.pinned]);
+
+  const handleVisitLink = useCallback(async () => {
+    const updatePromise = handleVisitBookmark(bookmark.id);
+
+    toast.promise(updatePromise, {
+      loading: 'Update......',
+      success: 'Updated.',
+      error: 'Failed to update bookmark.',
+    });
+
+    await updatePromise;
+  }, [handleVisitBookmark, bookmark.id]);
 
   return (
     <article className={styles.card}>
@@ -31,7 +58,14 @@ export const Card = ({ bookmark, menuItems }: CardProps) => {
             <div className={styles.names}>
               <h3 className={styles.title}>{bookmark.title}</h3>
               <div className={styles.url}>
-                <p>{bookmark.websiteUrl}</p>
+                <a
+                  href={bookmark.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleVisitLink}
+                >
+                  {bookmark.websiteUrl}
+                </a>
               </div>
             </div>
           </div>
@@ -59,8 +93,8 @@ export const Card = ({ bookmark, menuItems }: CardProps) => {
           <div className={`${styles.statsLastVisited} ${styles.stat}`}>
             <IconLastVisited />
             <span>
-              <time dateTime={bookmark.lastVisited}>
-                {new Date(bookmark.lastVisited).toLocaleString('en-GB', {
+              <time dateTime={bookmark.visitedAt}>
+                {new Date(bookmark.visitedAt).toLocaleString('en-GB', {
                   day: 'numeric',
                   month: 'short',
                 })}
@@ -83,16 +117,7 @@ export const Card = ({ bookmark, menuItems }: CardProps) => {
           className={styles.buttonPin}
           type="button"
           aria-label="Pin bookmark"
-          onClick={() =>
-            handleUpdateBookmark(
-              bookmark.id,
-              { pinned: !bookmark.pinned },
-              {
-                successMessage: `Bookmark ${bookmark.pinned ? 'unpinned' : 'pinned to top'}.`,
-                icon: bookmark.pinned ? <IconUnpin /> : <IconPin />,
-              },
-            )
-          }
+          onClick={handleFooterPinClick}
         >
           {bookmark.pinned ? <IconUnpin /> : <IconPin />}
         </button>

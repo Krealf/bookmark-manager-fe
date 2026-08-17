@@ -12,9 +12,9 @@ import IconPin from '@/assets/icons/icon-pin.svg?react';
 import IconVisit from '@/assets/icons/icon-visit.svg?react';
 import IconDelete from '@/assets/icons/icon-delete.svg?react';
 import { useClickOutside } from '@/hooks/useClickOutside';
-import { DropdownItem, iconName } from '@/types/dropdown';
+import { CardMenuItem, CardMenuIcon } from '@/types/dropdown';
 
-const iconMap: Record<iconName, React.ReactNode> = {
+const iconMap: Record<CardMenuIcon, React.ReactNode> = {
   visit: <IconVisit />,
   copy: <IconCopy />,
   pin: <IconPin />,
@@ -26,7 +26,7 @@ const iconMap: Record<iconName, React.ReactNode> = {
 };
 
 interface CardMenuProps {
-  items: DropdownItem[];
+  items: CardMenuItem[];
 }
 
 export const CardMenu = ({ items }: CardMenuProps) => {
@@ -34,7 +34,9 @@ export const CardMenu = ({ items }: CardMenuProps) => {
   const refMenu = useRef<HTMLUListElement>(null);
   useClickOutside(refMenu, () => setIsOpen(false));
 
-  const renderItem = (item: DropdownItem) => {
+  const renderMenuItem = (item: CardMenuItem) => {
+    const handleClose = () => setIsOpen(false);
+
     if (item.type === 'link') {
       return (
         <li className={styles.dropdownItem} key={item.label}>
@@ -44,7 +46,10 @@ export const CardMenu = ({ items }: CardMenuProps) => {
             role="menuitem"
             className={styles.dropdownControl}
             rel="noreferrer"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              item.onClick?.();
+              handleClose();
+            }}
           >
             {iconMap[item.iconName]}
             <span>{item.label}</span>
@@ -61,7 +66,7 @@ export const CardMenu = ({ items }: CardMenuProps) => {
           className={styles.dropdownControl}
           onClick={() => {
             item.onClick();
-            setIsOpen(!isOpen);
+            handleClose();
           }}
         >
           {iconMap[item.iconName]}
@@ -87,7 +92,7 @@ export const CardMenu = ({ items }: CardMenuProps) => {
 
       {isOpen && (
         <ul ref={refMenu} className={styles.dropdown} role="menu">
-          {items.map((item) => renderItem(item))}
+          {items.map((item) => renderMenuItem(item))}
         </ul>
       )}
     </div>

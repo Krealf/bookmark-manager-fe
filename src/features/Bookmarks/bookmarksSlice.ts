@@ -1,16 +1,17 @@
 import type { Bookmark } from '@/types/bookmark';
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit';
 import {
   createBookmark,
   deleteBookmarkById,
   fetchAllBookmarks,
   updateBookmarkById,
+  visitBookmarkById,
 } from '@/features/Bookmarks/bookmarksActions';
 
 export type bookmarksSlice = {
-  isLoading: boolean;
+  isFetched: boolean;
   list: Bookmark[];
-  previousList: Bookmark[] | null;
+  previousItems: Record<string, Bookmark>;
   selectedTags: string[];
   error: string | null;
   query: string;
@@ -18,9 +19,9 @@ export type bookmarksSlice = {
 };
 
 const initialState: bookmarksSlice = {
-  isLoading: true,
+  isFetched: false,
   list: [],
-  previousList: null,
+  previousItems: {},
   selectedTags: [],
   error: null,
   query: '',
@@ -32,12 +33,12 @@ const bookmarksSlice = createSlice({
   initialState,
   reducers: {
     toggleTag(state, action: PayloadAction<string>) {
-      const tag = action.payload;
+      const normalizedTag = action.payload.trim();
 
-      if (state.selectedTags.includes(tag)) {
-        state.selectedTags = state.selectedTags.filter((item) => item !== tag);
+      if (state.selectedTags.includes(normalizedTag)) {
+        state.selectedTags = state.selectedTags.filter((t) => t !== normalizedTag);
       } else {
-        state.selectedTags.push(tag);
+        state.selectedTags.push(normalizedTag);
       }
     },
     setSearchQuery(state, action: PayloadAction<string>) {
@@ -50,31 +51,38 @@ const bookmarksSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllBookmarks.pending, (state) => {
-        state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchAllBookmarks.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isFetched = true;
         state.list = action.payload;
       })
       .addCase(fetchAllBookmarks.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isFetched = false;
+        state.error = action.payload?.message || null;
+      })
+      .addCase(createBookmark.fulfilled, (state, action) => {
+        state.list.unshift(action.payload);
+      })
+      .addCase(createBookmark.rejected, (state, action) => {
         state.error = action.payload?.message || null;
       })
       .addCase(updateBookmarkById.pending, (state, action) => {
-        state.previousList = Array.from(state.list);
         const { id, dto } = action.meta.arg;
-
         const index = state.list.findIndex((item) => item.id === id);
 
         if (index !== -1) {
-          state.list[index] = { ...state.list[index], ...dto };
-        }
+          state.previousItems[id] = { ...current(state.list[index]) };
 
-        state.isLoading = true;
+          state.list[index] = {
+            ...state.list[index],
+            ...dto,
+          };
+        }
       })
       .addCase(updateBookmarkById.fulfilled, (state, action) => {
-        state.isLoading = false;
+        delete state.previousItems[action.payload.id];
+
         const index = state.list.findIndex((item) => item.id === action.payload.id);
 
         if (index !== -1) {
@@ -82,30 +90,59 @@ const bookmarksSlice = createSlice({
         }
       })
       .addCase(updateBookmarkById.rejected, (state, action) => {
-        state.list = state.previousList ?? state.list;
-        state.isLoading = false;
+        const { id } = action.meta.arg;
+        const prevBookmark = state.previousItems[id];
+
+        if (prevBookmark) {
+          const index = state.list.findIndex((item) => item.id === id);
+
+          if (index !== -1) {
+            state.list[index] = prevBookmark;
+          }
+          delete state.previousItems[id];
+        }
+
         state.error = action.payload?.message || null;
       })
-      .addCase(deleteBookmarkById.pending, (state) => {
-        state.isLoading = true;
+      .addCase(visitBookmarkById.pending, (state, action) => {
+        const id = action.meta.arg;
+        const index = state.list.findIndex((item) => item.id === id);
+
+        if (index !== -1) {
+          state.previousItems[id] = { ...current(state.list[index]) };
+
+          state.list[index].visitCount = (state.list[index].visitCount || 0) + 1;
+          state.list[index].visitedAt = new Date().toISOString();
+        }
+      })
+      .addCase(visitBookmarkById.fulfilled, (state, action) => {
+        delete state.previousItems[action.payload.id];
+
+        const index = state.list.findIndex((item) => item.id === action.payload.id);
+
+        if (index !== -1) {
+          state.list[index] = action.payload;
+        }
+      })
+      .addCase(visitBookmarkById.rejected, (state, action) => {
+        const id = action.meta.arg;
+        const prevBookmark = state.previousItems[id];
+
+        if (prevBookmark) {
+          const index = state.list.findIndex((item) => item.id === id);
+
+          if (index !== -1) {
+            state.list[index] = prevBookmark;
+          }
+          delete state.previousItems[id];
+        }
+
+        state.error = action.payload?.message || null;
       })
       .addCase(deleteBookmarkById.fulfilled, (state, action) => {
-        state.isLoading = false;
         state.list = state.list.filter((item) => item.id !== action.payload);
       })
       .addCase(deleteBookmarkById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload?.message || null;
-      })
-      .addCase(createBookmark.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(createBookmark.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.list.push(action.payload);
-      })
-      .addCase(createBookmark.rejected, (state, action) => {
-        state.isLoading = false;
         state.error = action.payload?.message || null;
       });
   },

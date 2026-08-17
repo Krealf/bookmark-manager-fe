@@ -9,5 +9,5 @@ export interface Bookmark {
   isArchived: boolean;
   visitCount: number;
   createdAt: string;
-  lastVisited: string;
+  visitedAt: string;
 }

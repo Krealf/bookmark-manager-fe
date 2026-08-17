@@ -54,6 +54,11 @@
   font-size: rem(12);
   font-weight: 500;
   color: var(--color-text-muted);
+  display: inline-block;
+  max-width: rem(200);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .body {

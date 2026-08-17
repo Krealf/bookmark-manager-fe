@@ -3,7 +3,7 @@ import { Modal } from '@/components/Modal';
 import React, { useState } from 'react';
 import { Button } from '@/components/Button';
 import { Bookmark } from '@/types/bookmark';
-import { UpdateOptions } from '@/types/submenu';
+import { toast } from 'sonner';
 
 interface EditModalProps {
   title: string;
@@ -14,8 +14,7 @@ interface EditModalProps {
   onSave: (
     id: Bookmark['id'],
     dto: Partial<Omit<Bookmark, 'id' | 'createdAt'>>,
-    options: UpdateOptions,
-  ) => void;
+  ) => Promise<Bookmark>;
   bookmark: Bookmark;
 }
 
@@ -30,21 +29,27 @@ export const EditModal = (props: EditModalProps) => {
     e.preventDefault();
     setIsSaving(true);
 
+    const updatedPromise = props.onSave(props.bookmark.id, {
+      title: titleBookmark.trim(),
+      description: descriptionBookmark.trim(),
+      websiteUrl: urlBookmark.trim(),
+      tags: tagsBookmark
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0),
+    });
+
+    toast.promise(updatedPromise, {
+      loading: 'Updating the bookmarks...',
+      success: 'The bookmark has been updated.',
+      error: 'Failed to update bookmark.',
+    });
+
     try {
-      props.onSave(
-        props.bookmark.id,
-        {
-          title: titleBookmark.trim(),
-          description: descriptionBookmark.trim(),
-          websiteUrl: urlBookmark.trim(),
-          tags: tagsBookmark.split(', ').flatMap((tag) => {
-            const trimmed = tag.trim();
-            return trimmed ? [trimmed] : [];
-          }),
-        },
-        { successMessage: 'Changes saved.' },
-      );
+      await updatedPromise;
       props.onClose();
+    } catch (error) {
+      console.error('Error while updating the bookmark. Log:', error);
     } finally {
       setIsSaving(false);
     }
@@ -68,6 +73,7 @@ export const EditModal = (props: EditModalProps) => {
               onChange={(e) => setTitleBookmark(e.target.value)}
               required
               name=""
+              autoFocus
             />
           </label>
           <label className={styles.field}>

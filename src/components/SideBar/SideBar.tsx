@@ -6,7 +6,10 @@ import IconArchived from '@/assets/icons/icon-archive.svg?react';
 import IconLightTheme from '@/assets/icons/logo-light-theme.svg';
 import IconDarkTheme from '@/assets/icons/logo-dark-theme.svg';
 import { useSelector } from 'react-redux';
-import { selectTagsWithCount } from '@/features/Bookmarks/bookmarksSelectors';
+import {
+  selectAllSelectedTags,
+  selectTagsWithCount,
+} from '@/features/Bookmarks/bookmarksSelectors';
 import { Checkbox } from '@/components/Checkbox';
 import { useAppDispatch } from '@/redux-hook';
 import { toggleTag } from '@/features/Bookmarks/bookmarksSlice';
@@ -15,14 +18,16 @@ interface SideBarProps {
   isOpen: boolean;
   className: string;
   id: string;
+  onClose: () => void;
 }
 
-export const SideBar = ({ isOpen, className, id }: SideBarProps) => {
+export const SideBar = ({ isOpen, className, id, onClose }: SideBarProps) => {
   const tagsArray = useSelector(selectTagsWithCount);
+  const selectedTags = useSelector(selectAllSelectedTags);
   const dispatch = useAppDispatch();
 
-  const handleToggleTag = (tagName: string) => {
-    dispatch(toggleTag(tagName));
+  const handleToggleTag = (tagKey: string) => {
+    dispatch(toggleTag(tagKey));
   };
 
   return (
@@ -55,6 +60,7 @@ export const SideBar = ({ isOpen, className, id }: SideBarProps) => {
           <ul className={styles.navList}>
             <li className={styles.navItem}>
               <NavLink
+                onClick={onClose}
                 className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
                 to="/"
                 end
@@ -65,6 +71,7 @@ export const SideBar = ({ isOpen, className, id }: SideBarProps) => {
             </li>
             <li className={styles.navItem}>
               <NavLink
+                onClick={onClose}
                 className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
                 to="/archived"
               >
@@ -79,13 +86,14 @@ export const SideBar = ({ isOpen, className, id }: SideBarProps) => {
             Tags
           </h2>
           <ul className={styles.tagList}>
-            {tagsArray.map(({ name, count }) => (
-              <li className={styles.tagItem} key={name}>
-                <label htmlFor={name.toLowerCase()} className={styles.tagLabel}>
+            {tagsArray.map(([tag, count]) => (
+              <li className={styles.tagItem} key={tag}>
+                <label htmlFor={`tag-${tag}`} className={styles.tagLabel}>
                   <Checkbox
-                    label={name}
-                    id={name.toLowerCase()}
-                    onChange={() => handleToggleTag(name)}
+                    label={tag}
+                    checked={selectedTags.includes(tag)}
+                    id={`tag-${tag}`}
+                    onChange={() => handleToggleTag(tag)}
                   />
                   <span className={styles.tagQuantity}>{count}</span>
                 </label>
