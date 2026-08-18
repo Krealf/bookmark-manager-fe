@@ -1,4 +1,4 @@
-import styles from './SearchTitle.module.scss';
+import styles from './SearchQuery.module.scss';
 
 interface SearchTitleProps {
   query: string;
@@ -6,7 +6,7 @@ interface SearchTitleProps {
   defaultText: string;
 }
 
-export const SearchTitle = ({ query, tags, defaultText }: SearchTitleProps) => {
+export const SearchQuery = ({ query, tags, defaultText }: SearchTitleProps) => {
   if (query.length > 0 && tags.length > 0) {
     return (
       <h1 className={styles.title}>

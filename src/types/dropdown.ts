@@ -8,21 +8,19 @@ export type CardMenuIcon =
   | 'unarchived'
   | 'delete';
 
-// Тип для ссылки
-type CardMenuLink = {
-  type: 'link';
-  label: string;
-  iconName: CardMenuIcon;
-  link: string;
-  onClick?: () => void;
-};
-
-// Тип для кнопки действия
-type CardMenuAction = {
-  type: 'action';
+interface BaseCardMenuItem {
   label: string;
   iconName: CardMenuIcon;
   onClick: () => void;
-};
+}
 
-export type CardMenuItem = CardMenuLink | CardMenuAction;
+export interface CardMenuLinkItem extends BaseCardMenuItem {
+  type: 'link';
+  url: string;
+}
+
+export interface CardMenuActionItem extends BaseCardMenuItem {
+  type: 'action';
+}
+
+export type CardMenuItem = CardMenuLinkItem | CardMenuActionItem;

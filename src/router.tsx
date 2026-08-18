@@ -1,10 +1,9 @@
 import { createBrowserRouter } from 'react-router';
 import { Layout } from '@/components/Layout';
-import { HomePage } from '@/pages/HomePage';
-import { ArchivedPage } from '@/pages/ArchivedPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { BookmarksPage } from '@/pages/BookmarksPage';
 
 // Создаём роутер
 export const router = createBrowserRouter([
@@ -15,9 +14,8 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
-          // Внутри обёртки рисуются дети:
-          { index: true, element: <HomePage /> },
-          { path: 'archived', element: <ArchivedPage /> },
+          { index: true, element: <BookmarksPage /> },
+          { path: 'archived', element: <BookmarksPage isArchived={true} /> },
         ],
       },
     ],

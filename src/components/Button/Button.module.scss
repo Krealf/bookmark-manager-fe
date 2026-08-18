@@ -14,22 +14,26 @@
   &.primary {
     border: rem(2) solid transparent;
     //noinspection CssInvalidFunction
-    background: linear-gradient(var(--color-primary), var(--color-primary)) padding-box,
-    linear-gradient(
-            to bottom,
-            oklch(from var(--color-primary) l c h / 0.8),
-            oklch(from var(--color-primary) l c h / 1)
-    ) border-box;
+    background:
+      linear-gradient(var(--color-primary), var(--color-primary)) padding-box,
+      linear-gradient(
+          to bottom,
+          oklch(from var(--color-primary) l c h / 0.8),
+          oklch(from var(--color-primary) l c h / 1)
+        )
+        border-box;
     color: #fff;
 
     @include hover() {
       //noinspection CssInvalidFunction
-      background: linear-gradient(var(--color-primary-hover), var(--color-primary-hover)) padding-box,
-      linear-gradient(
-              to bottom,
-              oklch(from var(--color-primary-hover) l c h / 0.8),
-              oklch(from var(--color-primary-hover) l c h / 1)
-      ) border-box;
+      background:
+        linear-gradient(var(--color-primary-hover), var(--color-primary-hover)) padding-box,
+        linear-gradient(
+            to bottom,
+            oklch(from var(--color-primary-hover) l c h / 0.8),
+            oklch(from var(--color-primary-hover) l c h / 1)
+          )
+          border-box;
       color: #fff;
     }
   }
@@ -37,22 +41,26 @@
   &.danger {
     border: rem(2) solid transparent;
     //noinspection CssInvalidFunction
-    background: linear-gradient(var(--color-danger), var(--color-danger)) padding-box,
-    linear-gradient(
-            to bottom,
-            oklch(from var(--color-danger) l c h / 0.8),
-            oklch(from var(--color-danger) l c h / 1)
-    ) border-box;
+    background:
+      linear-gradient(var(--color-danger), var(--color-danger)) padding-box,
+      linear-gradient(
+          to bottom,
+          oklch(from var(--color-danger) l c h / 0.8),
+          oklch(from var(--color-danger) l c h / 1)
+        )
+        border-box;
     color: #fff;
 
     @include hover() {
       //noinspection CssInvalidFunction
-      background: linear-gradient(var(--color-danger-hover), var(--color-danger-hover)) padding-box,
-      linear-gradient(
-              to bottom,
-              oklch(from var(--color-danger-hover) l c h / 0.8),
-              oklch(from var(--color-danger-hover) l c h / 1)
-      ) border-box;
+      background:
+        linear-gradient(var(--color-danger-hover), var(--color-danger-hover)) padding-box,
+        linear-gradient(
+            to bottom,
+            oklch(from var(--color-danger-hover) l c h / 0.8),
+            oklch(from var(--color-danger-hover) l c h / 1)
+          )
+          border-box;
       color: #fff;
     }
   }

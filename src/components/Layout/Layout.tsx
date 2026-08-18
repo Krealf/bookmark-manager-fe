@@ -17,19 +17,19 @@ import { Toaster } from 'sonner';
 import { useCallback } from 'react';
 
 export const Layout = () => {
-  const { isOpen, close, toggle } = useSidebarOpen();
+  const { isOpen, closeSidebar, toggleSidebar } = useSidebarOpen();
   const { activeModal, openModal, closeModal } = useModal();
   const { handleAddBookmark } = useBookmarksActions();
 
-  const handleOpenModal = useCallback(() => {
+  const handleOpenAddModal = useCallback(() => {
     openModal({ type: 'add' });
   }, [openModal]);
 
-  const handleNavOnClose = () => {
+  const handleCloseSidebar = () => {
     const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
 
     if (isMobile()) {
-      close();
+      closeSidebar();
     }
   };
 
@@ -43,7 +43,7 @@ export const Layout = () => {
             aria-controls="sidebar"
             aria-label="Open menu"
             type="button"
-            onClick={toggle}
+            onClick={toggleSidebar}
           >
             <IconMenuHamburger />
           </button>
@@ -57,7 +57,7 @@ export const Layout = () => {
             size="md"
             icon={IconPlus}
             className={styles.addBookmark}
-            onClick={handleOpenModal}
+            onClick={handleOpenAddModal}
           >
             Add Bookmark
           </Button>
@@ -68,11 +68,16 @@ export const Layout = () => {
       <button
         type="button"
         className={`${styles.overlay} ${isOpen ? styles.open : ''}`}
-        onClick={close}
+        onClick={closeSidebar}
         aria-label="Close menu"
       />
 
-      <SideBar className={styles.sidebar} id="sidebar" isOpen={isOpen} onClose={handleNavOnClose} />
+      <SideBar
+        className={styles.sidebar}
+        id="sidebar"
+        isOpen={isOpen}
+        onClose={handleCloseSidebar}
+      />
 
       <main className={styles.main}>
         <Outlet />

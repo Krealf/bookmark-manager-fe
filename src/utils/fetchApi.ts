@@ -34,7 +34,7 @@ $api.interceptors.response.use(
 
         return $api.request(originalRequest);
       } catch (error) {
-        console.log('Not authorized in interceptors', error);
+        console.error('Not authorized in interceptors. Log:', error);
       }
     }
 

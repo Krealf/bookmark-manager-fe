@@ -15,14 +15,14 @@ import { CardMenuItem } from '@/types/dropdown';
 
 interface CardProps {
   bookmark: Bookmark;
-  menuItems: CardMenuItem[];
+  menuActions: CardMenuItem[];
 }
 
-export const Card = ({ bookmark, menuItems }: CardProps) => {
+export const Card = ({ bookmark, menuActions }: CardProps) => {
   const { handleUpdateBookmark, handleVisitBookmark } = useBookmarksActions();
   const faviconUrl = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${bookmark.websiteUrl}&size=128`;
 
-  const handleFooterPinClick = useCallback(async () => {
+  const handleTogglePin = useCallback(async () => {
     try {
       await handleUpdateBookmark(bookmark.id, {
         pinned: !bookmark.pinned,
@@ -69,7 +69,7 @@ export const Card = ({ bookmark, menuItems }: CardProps) => {
               </div>
             </div>
           </div>
-          <CardMenu items={menuItems} />
+          <CardMenu actions={menuActions} />
         </div>
       </div>
       <div className={styles.body}>
@@ -117,7 +117,7 @@ export const Card = ({ bookmark, menuItems }: CardProps) => {
           className={styles.buttonPin}
           type="button"
           aria-label="Pin bookmark"
-          onClick={handleFooterPinClick}
+          onClick={handleTogglePin}
         >
           {bookmark.pinned ? <IconUnpin /> : <IconPin />}
         </button>

@@ -9,13 +9,13 @@ interface EditModalProps {
   title: string;
   description: string;
   confirmLabel: string;
+  bookmark: Bookmark;
   danger?: boolean;
   onClose: () => void;
   onSave: (
     id: Bookmark['id'],
     dto: Partial<Omit<Bookmark, 'id' | 'createdAt'>>,
   ) => Promise<Bookmark>;
-  bookmark: Bookmark;
 }
 
 export const EditModal = (props: EditModalProps) => {

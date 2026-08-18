@@ -14,7 +14,7 @@ import IconDelete from '@/assets/icons/icon-delete.svg?react';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { CardMenuItem, CardMenuIcon } from '@/types/dropdown';
 
-const iconMap: Record<CardMenuIcon, React.ReactNode> = {
+const ACTION_ICON_MAP: Record<CardMenuIcon, React.ReactNode> = {
   visit: <IconVisit />,
   copy: <IconCopy />,
   pin: <IconPin />,
@@ -26,51 +26,51 @@ const iconMap: Record<CardMenuIcon, React.ReactNode> = {
 };
 
 interface CardMenuProps {
-  items: CardMenuItem[];
+  actions: CardMenuItem[];
 }
 
-export const CardMenu = ({ items }: CardMenuProps) => {
+export const CardMenu = ({ actions }: CardMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const refMenu = useRef<HTMLUListElement>(null);
-  useClickOutside(refMenu, () => setIsOpen(false));
+  const menuRef = useRef<HTMLUListElement>(null);
+  useClickOutside(menuRef, () => setIsOpen(false));
 
-  const renderMenuItem = (item: CardMenuItem) => {
-    const handleClose = () => setIsOpen(false);
+  const handleCloseMenu = () => setIsOpen(false);
 
-    if (item.type === 'link') {
+  const renderAction = (action: CardMenuItem) => {
+    if (action.type === 'link') {
       return (
-        <li className={styles.dropdownItem} key={item.label}>
+        <li className={styles.dropdownItem} key={action.label}>
           <a
-            href={item.link}
+            href={action.url}
             target="_blank"
             role="menuitem"
             className={styles.dropdownControl}
             rel="noreferrer"
             onClick={() => {
-              item.onClick?.();
-              handleClose();
+              action.onClick?.();
+              handleCloseMenu();
             }}
           >
-            {iconMap[item.iconName]}
-            <span>{item.label}</span>
+            {ACTION_ICON_MAP[action.iconName]}
+            <span>{action.label}</span>
           </a>
         </li>
       );
     }
 
     return (
-      <li className={styles.dropdownItem} key={item.label}>
+      <li className={styles.dropdownItem} key={action.label}>
         <button
           type="button"
           role="menuitem"
           className={styles.dropdownControl}
           onClick={() => {
-            item.onClick();
-            handleClose();
+            action.onClick();
+            handleCloseMenu();
           }}
         >
-          {iconMap[item.iconName]}
-          <span>{item.label}</span>
+          {ACTION_ICON_MAP[action.iconName]}
+          <span>{action.label}</span>
         </button>
       </li>
     );
@@ -91,8 +91,8 @@ export const CardMenu = ({ items }: CardMenuProps) => {
       </button>
 
       {isOpen && (
-        <ul ref={refMenu} className={styles.dropdown} role="menu">
-          {items.map((item) => renderMenuItem(item))}
+        <ul ref={menuRef} className={styles.dropdown} role="menu">
+          {actions.map((item) => renderAction(item))}
         </ul>
       )}
     </div>

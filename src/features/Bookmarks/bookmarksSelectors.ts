@@ -33,6 +33,10 @@ export const selectFilteredBookmarks = createSelector(
     }
 
     result = [...result].sort((a, b) => {
+      if (a.pinned !== b.pinned) {
+        return b.pinned ? 1 : -1;
+      }
+
       if (category === 'recently_visited') {
         return new Date(b.visitedAt).getTime() - new Date(a.visitedAt).getTime();
       }

@@ -13,19 +13,19 @@ type MenuItemsCallbacks = Partial<{
 }>;
 
 interface MenuItemConfig {
-  items: MenuItemType[];
+  types: MenuItemType[];
   callbacks: MenuItemsCallbacks;
 }
 
 export const getMenuItems = (bookmark: Bookmark, config: MenuItemConfig): CardMenuItem[] => {
-  const { items, callbacks } = config;
+  const { types, callbacks } = config;
 
   const menuMap: Record<MenuItemType, CardMenuItem> = {
     visit: {
       type: 'link',
       label: 'Visit',
       iconName: 'visit',
-      link: bookmark.websiteUrl,
+      url: bookmark.websiteUrl,
       onClick: () => callbacks.onVisit?.(bookmark.id),
     },
     copy: {
@@ -60,5 +60,5 @@ export const getMenuItems = (bookmark: Bookmark, config: MenuItemConfig): CardMe
     },
   };
 
-  return items.map((item) => menuMap[item]);
+  return types.map((item) => menuMap[item]);
 };

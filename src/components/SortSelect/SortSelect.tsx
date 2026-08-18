@@ -1,4 +1,4 @@
-import styles from './Submenu.module.scss';
+import styles from './SortSelect.module.scss';
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { Button } from '@/components/Button';
@@ -6,18 +6,20 @@ import { Button } from '@/components/Button';
 import IconSort from '@/assets/icons/icon-sort.svg?react';
 import IconCheck from '@/assets/icons/icon-check.svg?react';
 import { SubmenuItem } from '@/types/submenu';
+import { useSelector } from 'react-redux';
+import { selectFilteredBookmarks } from '@/features/Bookmarks/bookmarksSelectors';
 
 interface SubmenuProps {
   label: string;
-  items: SubmenuItem[];
-  defaultOption: string;
+  options: SubmenuItem[];
 }
 
-export const Submenu = ({ label, items, defaultOption }: SubmenuProps) => {
+export const SortSelect = ({ label, options }: SubmenuProps) => {
+  const { activeCategory } = useSelector(selectFilteredBookmarks);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<string>(defaultOption);
-  const refMenu = useRef<HTMLUListElement>(null);
-  useClickOutside(refMenu, () => setIsOpen(false));
+  const [selectedOption, setSelectedOption] = useState<string>(activeCategory);
+  const menuRef = useRef<HTMLUListElement>(null);
+  useClickOutside(menuRef, () => setIsOpen(false));
 
   const handleOpenMenu = useCallback(() => setIsOpen((prevState) => !prevState), []);
 
@@ -39,21 +41,21 @@ export const Submenu = ({ label, items, defaultOption }: SubmenuProps) => {
       </Button>
 
       {isOpen && (
-        <ul ref={refMenu} className={styles.dropdown} role="menu">
-          {items.map(({ id, label, onClick }) => (
+        <ul ref={menuRef} className={styles.dropdown} role="menu">
+          {options.map(({ id, label, onClick }) => (
             <li role="none" key={id}>
               <button
                 role="menuitem"
                 type="button"
-                className={`${styles.dropdownControl} ${selectedItem === id ? styles.selected : ''}`}
+                className={`${styles.dropdownControl} ${selectedOption === id ? styles.selected : ''}`}
                 onClick={() => {
                   onClick();
                   setIsOpen(false);
-                  setSelectedItem(id);
+                  setSelectedOption(id);
                 }}
               >
                 <span>{label}</span>
-                {selectedItem === id && <IconCheck />}
+                {selectedOption === id && <IconCheck />}
               </button>
             </li>
           ))}

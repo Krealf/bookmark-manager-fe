@@ -26,20 +26,7 @@
 }
 
 .dropdown {
-  user-select: none;
-  position: absolute;
-  top: 110%;
-  right: 0;
-  border-radius: rem(8);
-  border: rem(1) solid var(--color-favicon-border);
-  background-color: var(--color-surface-inverse-search);
-  display: flex;
-  flex-direction: column;
-  gap: rem(4);
-  padding: rem(8);
-  min-width: rem(200);
-  z-index: 10;
-  box-shadow: 0 6px 14px 0 rgba(34, 38, 39, 0.1);
+  @include dropdown-panel;
 }
 
 .dropdownControl {

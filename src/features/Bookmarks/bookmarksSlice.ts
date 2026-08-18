@@ -1,5 +1,5 @@
 import type { Bookmark } from '@/types/bookmark';
-import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 import {
   createBookmark,
   deleteBookmarkById,
@@ -50,6 +50,8 @@ const bookmarksSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
+      // Fetch
       .addCase(fetchAllBookmarks.pending, (state) => {
         state.error = null;
       })
@@ -61,12 +63,24 @@ const bookmarksSlice = createSlice({
         state.isFetched = false;
         state.error = action.payload?.message || null;
       })
+
+      // Create
       .addCase(createBookmark.fulfilled, (state, action) => {
         state.list.unshift(action.payload);
       })
       .addCase(createBookmark.rejected, (state, action) => {
         state.error = action.payload?.message || null;
       })
+
+      // Delete
+      .addCase(deleteBookmarkById.fulfilled, (state, action) => {
+        state.list = state.list.filter((item) => item.id !== action.payload);
+      })
+      .addCase(deleteBookmarkById.rejected, (state, action) => {
+        state.error = action.payload?.message || null;
+      })
+
+      // Optimistic update for updating the bookmark
       .addCase(updateBookmarkById.pending, (state, action) => {
         const { id, dto } = action.meta.arg;
         const index = state.list.findIndex((item) => item.id === id);
@@ -80,30 +94,8 @@ const bookmarksSlice = createSlice({
           };
         }
       })
-      .addCase(updateBookmarkById.fulfilled, (state, action) => {
-        delete state.previousItems[action.payload.id];
 
-        const index = state.list.findIndex((item) => item.id === action.payload.id);
-
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        }
-      })
-      .addCase(updateBookmarkById.rejected, (state, action) => {
-        const { id } = action.meta.arg;
-        const prevBookmark = state.previousItems[id];
-
-        if (prevBookmark) {
-          const index = state.list.findIndex((item) => item.id === id);
-
-          if (index !== -1) {
-            state.list[index] = prevBookmark;
-          }
-          delete state.previousItems[id];
-        }
-
-        state.error = action.payload?.message || null;
-      })
+      // Optimistic update for the bookmark visit
       .addCase(visitBookmarkById.pending, (state, action) => {
         const id = action.meta.arg;
         const index = state.list.findIndex((item) => item.id === id);
@@ -115,36 +107,38 @@ const bookmarksSlice = createSlice({
           state.list[index].visitedAt = new Date().toISOString();
         }
       })
-      .addCase(visitBookmarkById.fulfilled, (state, action) => {
-        delete state.previousItems[action.payload.id];
 
-        const index = state.list.findIndex((item) => item.id === action.payload.id);
+      .addMatcher(
+        isAnyOf(updateBookmarkById.fulfilled, visitBookmarkById.fulfilled),
+        (state, action) => {
+          delete state.previousItems[action.payload.id];
 
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        }
-      })
-      .addCase(visitBookmarkById.rejected, (state, action) => {
-        const id = action.meta.arg;
-        const prevBookmark = state.previousItems[id];
-
-        if (prevBookmark) {
-          const index = state.list.findIndex((item) => item.id === id);
+          const index = state.list.findIndex((item) => item.id === action.payload.id);
 
           if (index !== -1) {
-            state.list[index] = prevBookmark;
+            state.list[index] = action.payload;
           }
-          delete state.previousItems[id];
-        }
+        },
+      )
+      .addMatcher(
+        isAnyOf(updateBookmarkById.rejected, visitBookmarkById.rejected),
+        (state, action) => {
+          const id = typeof action.meta.arg === 'object' ? action.meta.arg.id : action.meta.arg;
 
-        state.error = action.payload?.message || null;
-      })
-      .addCase(deleteBookmarkById.fulfilled, (state, action) => {
-        state.list = state.list.filter((item) => item.id !== action.payload);
-      })
-      .addCase(deleteBookmarkById.rejected, (state, action) => {
-        state.error = action.payload?.message || null;
-      });
+          const prevBookmark = state.previousItems[id];
+
+          if (prevBookmark) {
+            const index = state.list.findIndex((item) => item.id === id);
+
+            if (index !== -1) {
+              state.list[index] = prevBookmark;
+            }
+            delete state.previousItems[id];
+          }
+
+          state.error = action.payload?.message || null;
+        },
+      );
   },
 });
 

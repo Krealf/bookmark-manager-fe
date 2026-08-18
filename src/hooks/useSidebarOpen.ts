@@ -25,9 +25,9 @@ export function useSidebarOpen() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
-  const toggle = () => setIsOpen((prev) => !prev);
+  const openSidebar = () => setIsOpen(true);
+  const closeSidebar = () => setIsOpen(false);
+  const toggleSidebar = () => setIsOpen((prev) => !prev);
 
-  return { isOpen, open, close, toggle };
+  return { isOpen, openSidebar, closeSidebar, toggleSidebar };
 }

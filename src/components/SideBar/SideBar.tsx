@@ -15,9 +15,9 @@ import { useAppDispatch } from '@/redux-hook';
 import { toggleTag } from '@/features/Bookmarks/bookmarksSlice';
 
 interface SideBarProps {
+  id: string;
   isOpen: boolean;
   className: string;
-  id: string;
   onClose: () => void;
 }
 
