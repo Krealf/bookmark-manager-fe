@@ -10,7 +10,13 @@
   gap: rem(32);
 }
 
-.heading {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.captions {
   display: flex;
   flex-direction: column;
   gap: rem(8);
@@ -28,6 +34,11 @@
   color: var(--color-text-muted);
   font-weight: 500;
   line-height: 1.5;
+}
+
+.closeButton {
+  background-color: transparent;
+  border: none;
 }
 
 .body {
@@ -60,9 +71,14 @@
   padding: rem(12);
   color: var(--color-text);
   width: 100%;
+
+  &:hover {
+    background-color: var(--color-favicon-border);
+  }
 }
 
 .textarea {
+  min-height: rem(70);
   resize: vertical;
 }
 
@@ -70,4 +86,14 @@
   display: flex;
   justify-content: end;
   gap: rem(16);
+
+  @include mobile() {
+    justify-content: space-between;
+  }
+}
+
+.cancel {
+  @include mobile() {
+    flex: 1;
+  }
 }

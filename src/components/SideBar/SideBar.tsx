@@ -1,18 +1,16 @@
 import styles from './SideBar.module.scss';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 
 import IconHome from '@/assets/icons/icon-home.svg?react';
 import IconArchived from '@/assets/icons/icon-archive.svg?react';
 import IconLightTheme from '@/assets/icons/logo-light-theme.svg';
 import IconDarkTheme from '@/assets/icons/logo-dark-theme.svg';
 import { useSelector } from 'react-redux';
-import {
-  selectAllSelectedTags,
-  selectTagsWithCount,
-} from '@/features/Bookmarks/bookmarksSelectors';
+import { selectSidebarTags } from '@/features/Bookmarks/bookmarksSelectors';
 import { Checkbox } from '@/components/Checkbox';
 import { useAppDispatch } from '@/redux-hook';
-import { toggleTag } from '@/features/Bookmarks/bookmarksSlice';
+import { resetFilters, toggleTag } from '@/features/Bookmarks/bookmarksSlice';
+import { RootState } from '@/store';
 
 interface SideBarProps {
   id: string;
@@ -22,12 +20,19 @@ interface SideBarProps {
 }
 
 export const SideBar = ({ isOpen, className, id, onClose }: SideBarProps) => {
-  const tagsArray = useSelector(selectTagsWithCount);
-  const selectedTags = useSelector(selectAllSelectedTags);
+  const location = useLocation();
+  const isArchived = location.pathname.startsWith('/archived');
+  const tagsArray = useSelector((state: RootState) => selectSidebarTags(state, isArchived));
+  const selectedTags = useSelector((state: RootState) => state.bookmarks.selectedTags);
   const dispatch = useAppDispatch();
 
   const handleToggleTag = (tagKey: string) => {
     dispatch(toggleTag(tagKey));
+  };
+
+  const handleNavClick = () => {
+    dispatch(resetFilters());
+    onClose();
   };
 
   return (
@@ -60,7 +65,7 @@ export const SideBar = ({ isOpen, className, id, onClose }: SideBarProps) => {
           <ul className={styles.navList}>
             <li className={styles.navItem}>
               <NavLink
-                onClick={onClose}
+                onClick={handleNavClick}
                 className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
                 to="/"
                 end
@@ -71,7 +76,7 @@ export const SideBar = ({ isOpen, className, id, onClose }: SideBarProps) => {
             </li>
             <li className={styles.navItem}>
               <NavLink
-                onClick={onClose}
+                onClick={handleNavClick}
                 className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
                 to="/archived"
               >
@@ -86,14 +91,14 @@ export const SideBar = ({ isOpen, className, id, onClose }: SideBarProps) => {
             Tags
           </h2>
           <ul className={styles.tagList}>
-            {tagsArray.map(([tag, count]) => (
-              <li className={styles.tagItem} key={tag}>
-                <label htmlFor={`tag-${tag}`} className={styles.tagLabel}>
+            {tagsArray.map(({ key, name, count }) => (
+              <li className={styles.tagItem} key={key}>
+                <label htmlFor={`tag-${key}`} className={styles.tagLabel}>
                   <Checkbox
-                    label={tag}
-                    checked={selectedTags.includes(tag)}
-                    id={`tag-${tag}`}
-                    onChange={() => handleToggleTag(tag)}
+                    label={name}
+                    checked={selectedTags.includes(name)}
+                    id={`tag-${key}`}
+                    onChange={() => handleToggleTag(name)}
                   />
                   <span className={styles.tagQuantity}>{count}</span>
                 </label>

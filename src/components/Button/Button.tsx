@@ -9,7 +9,7 @@ type ButtonProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   typeButton?: ButtonType;
   icon?: React.FC<SVGProps<SVGSVGElement>>;
   onClick?: () => void;
@@ -40,7 +40,7 @@ export const Button = React.memo(
         onClick={onClick}
       >
         {Icon && <Icon />}
-        <span>{isLoading ? 'Загрузка...' : children}</span>
+        {isLoading ? 'Loading...' : children && <span>{children}</span>}
       </button>
     );
   },

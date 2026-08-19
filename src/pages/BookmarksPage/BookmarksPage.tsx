@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectFilteredBookmarks } from '@/features/Bookmarks/bookmarksSelectors';
 import { useModal } from '@/hooks/useModal';
 import { useBookmarksActions } from '@/hooks/useBookmarksActions';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { fetchAllBookmarks } from '@/features/Bookmarks/bookmarksActions';
 import { Bookmark } from '@/types/bookmark';
 import { toast } from 'sonner';
@@ -14,17 +14,23 @@ import { setCategory } from '@/features/Bookmarks/bookmarksSlice';
 import { CardSkeleton } from '@/components/CardSkeleton';
 import { Card } from '@/components/Card';
 import { getMenuItems } from '@/utils/getMenuItems';
-import { EditModal } from '@/components/EditModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { BookmarkFormData, FormModal } from '@/components/FormModal';
+import { RootState } from '@/store';
 
 interface BookmarksPageProps {
   isArchived?: boolean;
 }
 
-export const BookmarksPage = ({ isArchived }: BookmarksPageProps) => {
+export const BookmarksPage = ({ isArchived = false }: BookmarksPageProps) => {
   const dispatch = useAppDispatch();
 
-  const { filteredBookmarks, query, activeTags } = useSelector(selectFilteredBookmarks);
+  const displayedBookmarks = useSelector((state: RootState) =>
+    selectFilteredBookmarks(state, isArchived),
+  );
+  const query = useSelector((state: RootState) => state.bookmarks.query);
+  const activeTags = useSelector((state: RootState) => state.bookmarks.selectedTags);
+
   const { isFetched } = useAppSelector((state) => state.bookmarks);
 
   const { activeModal, closeModal, openModal } = useModal();
@@ -35,11 +41,6 @@ export const BookmarksPage = ({ isArchived }: BookmarksPageProps) => {
       dispatch(fetchAllBookmarks());
     }
   }, [isFetched]);
-
-  const displayedBookmarks = useMemo(
-    () => filteredBookmarks.filter((b) => (isArchived ? b.isArchived : !b.isArchived)),
-    [filteredBookmarks, isArchived],
-  );
 
   const handleVisitMenuClick = useCallback(
     async (bookmarkId: Bookmark['id']) => {
@@ -122,6 +123,17 @@ export const BookmarksPage = ({ isArchived }: BookmarksPageProps) => {
     await updatePromise;
   }, [activeModal, handleDeleteBookmark, closeModal]);
 
+  const handleSubmitEditBookmark = useCallback(
+    async (formData: BookmarkFormData) => {
+      if (!activeModal || activeModal.type !== 'edit') {
+        return;
+      }
+
+      return handleUpdateBookmark(activeModal.bookmark.id, formData);
+    },
+    [activeModal, handleDeleteBookmark, closeModal],
+  );
+
   return (
     <>
       <section className={styles.section}>
@@ -154,7 +166,7 @@ export const BookmarksPage = ({ isArchived }: BookmarksPageProps) => {
         </div>
         <div className={styles.container}>
           {!isFetched &&
-            filteredBookmarks.length === 0 &&
+            displayedBookmarks.length === 0 &&
             Array.from({ length: 9 }).map((_, i) => <CardSkeleton key={i} />)}
 
           {displayedBookmarks.map((bookmark) => (
@@ -184,13 +196,10 @@ export const BookmarksPage = ({ isArchived }: BookmarksPageProps) => {
       </section>
 
       {activeModal?.type === 'edit' && (
-        <EditModal
-          title="Edit bookmark"
-          description="Update your saved link details — change the title, description, URL, or tags anytime."
-          confirmLabel="Save Bookmark"
-          bookmark={activeModal.bookmark}
+        <FormModal
+          initialBookmark={activeModal.bookmark}
           onClose={closeModal}
-          onSave={handleUpdateBookmark}
+          onSubmit={handleSubmitEditBookmark}
         />
       )}
 

@@ -28,6 +28,22 @@ const initialState: bookmarksSlice = {
   category: 'recently_added',
 };
 
+const cleanupOrphanTags = (state: bookmarksSlice) => {
+  if (state.selectedTags.length === 0) return;
+
+  const availableTags = new Set<string>();
+
+  state.list.forEach((bookmark) => {
+    bookmark.tags?.forEach((tag) => {
+      availableTags.add(tag.trim().toLowerCase());
+    });
+  });
+
+  state.selectedTags = state.selectedTags.filter((selectedTag) =>
+    availableTags.has(selectedTag.trim().toLowerCase()),
+  );
+};
+
 const bookmarksSlice = createSlice({
   name: '@bookmarks',
   initialState,
@@ -46,6 +62,10 @@ const bookmarksSlice = createSlice({
     },
     setCategory(state, action: PayloadAction<bookmarksSlice['category']>) {
       state.category = action.payload;
+    },
+    resetFilters(state) {
+      state.query = '';
+      state.selectedTags = [];
     },
   },
   extraReducers: (builder) => {
@@ -75,6 +95,8 @@ const bookmarksSlice = createSlice({
       // Delete
       .addCase(deleteBookmarkById.fulfilled, (state, action) => {
         state.list = state.list.filter((item) => item.id !== action.payload);
+
+        cleanupOrphanTags(state);
       })
       .addCase(deleteBookmarkById.rejected, (state, action) => {
         state.error = action.payload?.message || null;
@@ -118,6 +140,8 @@ const bookmarksSlice = createSlice({
           if (index !== -1) {
             state.list[index] = action.payload;
           }
+
+          cleanupOrphanTags(state);
         },
       )
       .addMatcher(
@@ -142,6 +166,6 @@ const bookmarksSlice = createSlice({
   },
 });
 
-export const { toggleTag, setSearchQuery, setCategory } = bookmarksSlice.actions;
+export const { toggleTag, setSearchQuery, setCategory, resetFilters } = bookmarksSlice.actions;
 
 export default bookmarksSlice.reducer;

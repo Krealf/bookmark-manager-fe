@@ -11,10 +11,10 @@ import { SideBar } from '@/components/SideBar';
 import { SearchField } from '@/components/SearchField';
 import { UserMenu } from '@/components/UserMenu';
 import { useModal } from '@/hooks/useModal';
-import { AddModal } from '@/components/AddModal';
 import { useBookmarksActions } from '@/hooks/useBookmarksActions';
 import { Toaster } from 'sonner';
 import { useCallback } from 'react';
+import { FormModal } from '@/components/FormModal';
 
 export const Layout = () => {
   const { isOpen, closeSidebar, toggleSidebar } = useSidebarOpen();
@@ -83,13 +83,7 @@ export const Layout = () => {
         <Outlet />
 
         {activeModal?.type === 'add' && (
-          <AddModal
-            title="Add a bookmark"
-            description="Save a link with details to keep your collection organized."
-            confirmLabel="Add Bookmark"
-            onClose={closeModal}
-            onSave={handleAddBookmark}
-          />
+          <FormModal onClose={closeModal} onSubmit={handleAddBookmark} />
         )}
       </main>
 
