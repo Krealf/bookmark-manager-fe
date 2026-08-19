@@ -118,9 +118,7 @@ export const FormModal = ({ initialBookmark, onClose, onSubmit }: FormModalProps
             />
           </label>
           <div className={styles.field}>
-            <div className={styles.label}>
-              Tags <span className={styles.required}>*</span>
-            </div>
+            <div className={styles.label}>Tags</div>
             <TagInput
               existingTags={existingTags}
               value={formData.tags}

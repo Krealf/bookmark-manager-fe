@@ -68,6 +68,16 @@ export const TagInput = ({
     onChange(selectedTags.filter((_, idx) => idx !== indexToRemove));
   };
 
+  const handleBlur = () => {
+    if (inputValue.trim()) {
+      handleAddTag(inputValue);
+    }
+
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Tab' || event.key === ',') {
       if (inputValue.trim()) {
@@ -128,7 +138,7 @@ export const TagInput = ({
             setHighlightedIndex(0);
           }}
           onKeyDown={handleKeyDown}
-          onBlur={() => setTimeout(() => setIsOpen(false), 150)}
+          onBlur={handleBlur}
           onFocus={() => setIsOpen(true)}
         />
       </div>
