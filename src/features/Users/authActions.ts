@@ -10,6 +10,10 @@ interface LoginArgs {
   password: string;
 }
 
+interface RegisterArgs extends LoginArgs {
+  fullName: string;
+}
+
 export const login = createAsyncThunk<AuthResponse, LoginArgs, { rejectValue: ApiErrorPayload }>(
   'auth/login',
   async (dto, { rejectWithValue }) => {
@@ -26,7 +30,7 @@ export const login = createAsyncThunk<AuthResponse, LoginArgs, { rejectValue: Ap
 
 export const registration = createAsyncThunk<
   AuthResponse,
-  LoginArgs,
+  RegisterArgs,
   { rejectValue: ApiErrorPayload }
 >('auth/register', async (dto, { rejectWithValue }) => {
   try {

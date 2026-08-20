@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router';
 import { Layout } from '@/components/Layout';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { LoginPage } from '@/pages/LoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { BookmarksPage } from '@/pages/BookmarksPage';
+import { AuthPage } from '@/pages/AuthPage';
 
 // Создаём роутер
 export const router = createBrowserRouter([
@@ -22,7 +22,11 @@ export const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <LoginPage />,
+    element: <AuthPage type="login" />,
+  },
+  {
+    path: '/register',
+    element: <AuthPage type="register" />,
   },
   {
     // Все остальные неизвестные пути возвращают NotFound
