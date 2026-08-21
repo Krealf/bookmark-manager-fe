@@ -6,6 +6,7 @@ jspm_packages/
 .env
 .env.local
 .env.*.local
+.env.production
 
 # Логи и отладка
 logs/
@@ -32,6 +33,7 @@ coverage/
 .Trashes
 ehthumbs.db
 Thumbs.db
+tsconfig.tsbuildinfo
 
 # Редакторы и IDE
 .vscode/

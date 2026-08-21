@@ -7,7 +7,7 @@ import IconSort from '@/assets/icons/icon-sort.svg?react';
 import IconCheck from '@/assets/icons/icon-check.svg?react';
 import { SubmenuItem } from '@/types/submenu';
 import { useSelector } from 'react-redux';
-import { selectFilteredBookmarks } from '@/features/Bookmarks/bookmarksSelectors';
+import { RootState } from '@/store';
 
 interface SubmenuProps {
   label: string;
@@ -15,7 +15,7 @@ interface SubmenuProps {
 }
 
 export const SortSelect = ({ label, options }: SubmenuProps) => {
-  const { activeCategory } = useSelector(selectFilteredBookmarks);
+  const activeCategory = useSelector((state: RootState) => state.bookmarks.category);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>(activeCategory);
   const menuRef = useRef<HTMLUListElement>(null);

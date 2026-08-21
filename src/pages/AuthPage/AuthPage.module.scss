@@ -88,22 +88,26 @@
   height: rem(46);
   border: rem(2) solid transparent;
   //noinspection CssInvalidFunction
-  background: linear-gradient(var(--teal-700), var(--teal-700)) padding-box,
-  linear-gradient(
-          to bottom,
-          oklch(from var(--teal-700) l c h / 0.8),
-          oklch(from var(--teal-700) l c h / 1)
-  ) border-box;
+  background:
+    linear-gradient(var(--teal-700), var(--teal-700)) padding-box,
+    linear-gradient(
+        to bottom,
+        oklch(from var(--teal-700) l c h / 0.8),
+        oklch(from var(--teal-700) l c h / 1)
+      )
+      border-box;
   color: #fff;
 
   @include hover() {
     //noinspection CssInvalidFunction
-    background: linear-gradient(var(--teal-800), var(--teal-800)) padding-box,
-    linear-gradient(
-            to bottom,
-            oklch(from var(--teal-800) l c h / 0.8),
-            oklch(from var(--teal-800) l c h / 1)
-    ) border-box;
+    background:
+      linear-gradient(var(--teal-800), var(--teal-800)) padding-box,
+      linear-gradient(
+          to bottom,
+          oklch(from var(--teal-800) l c h / 0.8),
+          oklch(from var(--teal-800) l c h / 1)
+        )
+        border-box;
     color: #fff;
   }
 }

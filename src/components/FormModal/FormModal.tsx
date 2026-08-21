@@ -21,7 +21,7 @@ interface FormModalProps {
   initialBookmark?: Bookmark;
   isOpen?: boolean;
   onClose: () => void;
-  onSubmit: (formData: BookmarkFormData) => Promise<Bookmark>;
+  onSubmit: (formData: BookmarkFormData) => Promise<Bookmark | undefined>;
 }
 
 export const FormModal = ({ initialBookmark, onClose, onSubmit }: FormModalProps) => {
