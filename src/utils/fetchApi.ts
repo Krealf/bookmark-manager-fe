@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken, setToken } from '@/services/AuthService';
 import { AuthResponse } from '@/models/response/AuthResponse';
 
-export const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const $api = axios.create({
   withCredentials: true,
