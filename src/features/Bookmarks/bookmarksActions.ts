@@ -14,7 +14,7 @@ export const fetchAllBookmarks = createAsyncThunk<
   { rejectValue: ApiErrorPayload }
 >('bookmarks/fetchBookmarks', async (_, { rejectWithValue }) => {
   try {
-    const response = await $api.get('api/bookmarks');
+    const response = await $api.get('bookmarks');
 
     return response.data;
   } catch (error) {
@@ -28,7 +28,7 @@ export const updateBookmarkById = createAsyncThunk<
   { rejectValue: ApiErrorPayload }
 >('bookmarks/updateById', async ({ id, dto }, { rejectWithValue }) => {
   try {
-    const response = await $api.patch(`api/bookmarks/${id}`, dto);
+    const response = await $api.patch(`bookmarks/${id}`, dto);
 
     return response.data;
   } catch (error) {
@@ -42,7 +42,7 @@ export const visitBookmarkById = createAsyncThunk<
   { rejectValue: ApiErrorPayload }
 >('bookmarks/visit', async (id, { rejectWithValue }) => {
   try {
-    const response = await $api.post(`api/bookmarks/${id}/visit`);
+    const response = await $api.post(`bookmarks/${id}/visit`);
 
     return response.data;
   } catch (error) {
@@ -70,7 +70,7 @@ export const createBookmark = createAsyncThunk<
   { rejectValue: ApiErrorPayload }
 >('bookmarks/createBookmark', async (dto, { rejectWithValue }) => {
   try {
-    const response = await $api.post('api/bookmarks', dto);
+    const response = await $api.post('bookmarks', dto);
 
     return response.data;
   } catch (error) {
