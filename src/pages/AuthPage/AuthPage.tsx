@@ -75,11 +75,11 @@ export const AuthPage = ({ type }: AuthPageProps) => {
         <form action="" method="post" className={styles.form} onSubmit={handleSubmit}>
           {type === 'register' && (
             <div className={styles.formGroup}>
-              <label htmlFor="email" className={styles.label}>
+              <label htmlFor="fullname" className={styles.label}>
                 Full name
               </label>
               <input
-                type="fullname"
+                type="text"
                 name="fullname"
                 id="fullname"
                 className={styles.input}
