@@ -33,9 +33,12 @@ export const AuthPage = ({ type }: AuthPageProps) => {
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (type === 'login') dispatch(login({ email, password }));
-
-    dispatch(registration({ fullName, email, password }));
+    if (type === 'login') {
+      dispatch(login({ email, password }));
+      return;
+    } else {
+      dispatch(registration({ fullName, email, password }));
+    }
   };
 
   if (isLoading) {
